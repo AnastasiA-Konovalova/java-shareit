@@ -1,12 +1,11 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.item.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 @Data
-public class Item {
+public class ItemCreateDto {
 
     private Long id;
 
@@ -18,8 +17,4 @@ public class Item {
 
     @NotNull(message = "статус должен быть указан")
     private Boolean available;
-
-    @Positive(message = "id не может быть отрицательным")
-    @NotNull(message = "id должен быть указан")
-    private Long ownerId;
 }
