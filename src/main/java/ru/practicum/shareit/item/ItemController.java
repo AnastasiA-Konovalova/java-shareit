@@ -17,9 +17,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
@@ -57,8 +54,8 @@ public class ItemController {
     }
 
     @DeleteMapping("/{itemId}")
-    public void deleteItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                           @PathVariable(name = "itemId") long itemId) {
-        itemService.deleteItem(userId, itemId);
+    public void delete(@RequestHeader("X-Sharer-User-Id") long userId,
+                       @PathVariable(name = "itemId") long itemId) {
+        itemService.delete(userId, itemId);
     }
 }

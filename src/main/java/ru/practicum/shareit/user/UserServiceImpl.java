@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exeptions.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserMapperToDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -21,13 +21,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAll() {
         List<User> users = userRepository.getAll();
-        if (users.isEmpty()) {
-            log.warn("Список пользователей пуст");
-            throw new NotFoundException("Ошибка в получении списка пользователей. Список пуст");
-        }
 
         return users.stream()
-                .map(UserMapperToDto::toDto)
+                .map(UserMapper::toDto)
                 .toList();
     }
 
@@ -38,25 +34,39 @@ public class UserServiceImpl implements UserService {
             return new NotFoundException("Ошибка в получении пользователя с id " + userId + ".");
         });
 
-        return UserMapperToDto.toDto(user);
+        return UserMapper.toDto(user);
     }
 
     @Override
     public UserDto save(UserDto userDto) {
-        User user = UserMapperToDto.toEntity(new User(), userDto);
+        uniqueEmailValidate(userDto);
+        User user = UserMapper.toEntity(new User(), userDto);
 
-        return UserMapperToDto.toDto(userRepository.save(user));
+        return UserMapper.toDto(userRepository.save(user));
     }
 
     @Override
-    public UserDto update(UserDto newUserDto, Long userId) {
-        User user = UserMapperToDto.toEntity(new User(), newUserDto);
+    public UserDto update(UserDto newDto, Long userId) {
+        if (newDto.getEmail() != null) {
+            uniqueEmailValidate(newDto);
+        }
+        getById(userId);
+        User user = UserMapper.toEntity(new User(), newDto);
 
-        return UserMapperToDto.toDto(userRepository.update(user, userId));
+        return UserMapper.toDto(userRepository.update(user, userId));
     }
 
     @Override
-    public void delete(long userId) {
+    public void delete(Long userId) {
         userRepository.delete(userId);
+    }
+
+    private void uniqueEmailValidate(UserDto userDto) {
+        List<User> userList = userRepository.getAll();
+        boolean emailExists = userList.stream()
+                .anyMatch(user -> userDto.getEmail().equals(user.getEmail()));
+        if (emailExists) {
+            throw new IllegalStateException("пользователь с таким email уже существует");
+        }
     }
 }

@@ -17,4 +17,6 @@ public class ItemCreateDto {
 
     @NotNull(message = "статус должен быть указан")
     private Boolean available;
+
+    private Long ownerId;
 }

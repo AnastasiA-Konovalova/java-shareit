@@ -1,7 +1,8 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.model;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
 
 import java.time.LocalDateTime;
