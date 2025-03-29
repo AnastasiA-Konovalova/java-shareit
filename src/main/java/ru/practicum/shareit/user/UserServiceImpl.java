@@ -52,8 +52,8 @@ public class UserServiceImpl implements UserService {
         }
         getById(userId);
         User user = UserMapper.toEntity(new User(), newDto);
-
-        return UserMapper.toDto(userRepository.update(user, userId));
+        user.setId(userId);
+        return UserMapper.toDto(userRepository.update(user));
     }
 
     @Override

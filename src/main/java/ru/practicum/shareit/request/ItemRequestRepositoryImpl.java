@@ -33,11 +33,11 @@ public class ItemRequestRepositoryImpl implements ItemRequestRepository {
     }
 
     @Override
-    public ItemRequest create(ItemRequest itemRequest, Long userId) {
+    public ItemRequest create(ItemRequest itemRequest) {
         Long id = idGenerator.getAndIncrement();
         ItemRequest createItemRequest = new ItemRequest();
         createItemRequest.setId(id);
-        createItemRequest.setRequesterId(userId);
+        createItemRequest.setRequesterId(itemRequest.getRequesterId());
         createItemRequest.setDescription(itemRequest.getDescription());
         createItemRequest.setRequestCreate(itemRequest.getRequestCreate());
         createItemRequest.setRequestCreate(itemRequest.getRequestCreate());

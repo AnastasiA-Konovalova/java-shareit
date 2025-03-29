@@ -72,11 +72,12 @@ public class ItemServiceImpl implements ItemService {
         }
         newItem.setOwnerId(userId);
         Item updateItem = ItemMapper.toEntity(new Item(), newItem);
+        updateItem.setId(itemId);
         userService.getById(userId);
         checkItemIdExists(itemId);
         checkOwnerId(userId, itemId);
 
-        return ItemMapper.toDto(itemRepository.update(updateItem, itemId));
+        return ItemMapper.toDto(itemRepository.update(updateItem));
     }
 
     @Override
@@ -85,7 +86,7 @@ public class ItemServiceImpl implements ItemService {
         checkItemIdExists(itemId);
         checkOwnerId(userId, itemId);
 
-        itemRepository.delete(userId, itemId);
+        itemRepository.delete(itemId);
     }
 
     private void checkOwnerId(Long userId, Long itemId) {

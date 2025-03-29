@@ -11,5 +11,5 @@ public interface ItemRequestRepository {
 
     List<ItemRequest> getUserRequest(Long userId);
 
-    ItemRequest create(ItemRequest itemRequest, Long userId);
+    ItemRequest create(ItemRequest itemRequest);
 }

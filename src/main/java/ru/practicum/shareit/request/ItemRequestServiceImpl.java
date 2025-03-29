@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exeptions.NotFoundException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapperToDto;
+import ru.practicum.shareit.user.UserService;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
 public class ItemRequestServiceImpl implements ItemRequestService {
 
     private final ItemRequestRepository itemRequestRepository;
+    private final UserService userService;
 
     @Override
     public ItemRequestDto getById(Long requestId) {
@@ -29,10 +31,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDto> getAll() {
         List<ItemRequest> requestDtos = itemRequestRepository.getAll();
-        if (requestDtos.isEmpty()) {
-            log.warn("Список запросов пуст");
-            throw new NotFoundException("Ошибка в получении списка запросов. Список пуст");
-        }
 
         return requestDtos.stream()
                 .map(ItemRequestMapperToDto::toDto)
@@ -41,11 +39,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> getUserRequest(Long userId) {
+        userService.getById(userId);
         List<ItemRequest> itemRequests = itemRequestRepository.getUserRequest(userId);
-        if (itemRequests.isEmpty()) {
-            log.warn("Список запросов пуст");
-            throw new NotFoundException("Ошибка в получении списка запросов с id пользователя " + userId + ". Список пуст");
-        }
 
         return itemRequests.stream()
                 .map(ItemRequestMapperToDto::toDto)
@@ -54,8 +49,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto create(ItemRequestDto itemRequestDto, Long userId) {
+        userService.getById(userId);
         ItemRequest itemRequest = ItemRequestMapperToDto.toEntity(new ItemRequest(), itemRequestDto);
 
-        return ItemRequestMapperToDto.toDto(itemRequestRepository.create(itemRequest, userId));
+        return ItemRequestMapperToDto.toDto(itemRequestRepository.create(itemRequest));
     }
 }

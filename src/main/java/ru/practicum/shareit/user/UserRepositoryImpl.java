@@ -36,8 +36,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User update(User newUser, Long userId) {
-        Optional<User> optionalUser = getById(userId);
+    public User update(User newUser) {
+        Optional<User> optionalUser = getById(newUser.getId());
         User user = optionalUser.orElseThrow(() -> new NotFoundException("Такой пользователь отсутствует в списке"));
         if (newUser.getName() != null) {
             user.setName(newUser.getName());

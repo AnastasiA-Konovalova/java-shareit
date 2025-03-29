@@ -13,7 +13,7 @@ public interface UserRepository {
 
     User save(User user);
 
-    User update(User newUser, Long userId);
+    User update(User newUser);
 
     void delete(Long userId);
 }

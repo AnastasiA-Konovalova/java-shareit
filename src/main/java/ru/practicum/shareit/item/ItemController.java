@@ -22,16 +22,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemController {
 
+    private static final String X_SHARER_USER_ID_HEADER = "X-Sharer-User-Id";
+
     private final ItemService itemService;
 
     @GetMapping
-    public List<ItemDto> getByOwnerId(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemDto> getByOwnerId(@RequestHeader(X_SHARER_USER_ID_HEADER) long userId) {
         return itemService.getByOwnerId(userId);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable("itemId") long itemId,
-                               @RequestHeader("X-Sharer-User-Id") long userId) {
+    public ItemDto getItemById(@PathVariable long itemId,
+                               @RequestHeader(X_SHARER_USER_ID_HEADER) long userId) {
         return itemService.getItemById(itemId, userId);
     }
 
@@ -42,19 +44,19 @@ public class ItemController {
 
     @PostMapping
     public ItemCreateDto create(@Valid @RequestBody ItemCreateDto itemDto,
-                                @RequestHeader("X-Sharer-User-Id") Long userId) {
+                                @RequestHeader(X_SHARER_USER_ID_HEADER) Long userId) {
         return itemService.create(itemDto, userId);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto update(@Valid @RequestBody ItemDto newItemDto,
-                          @RequestHeader("X-Sharer-User-Id") Long id,
+                          @RequestHeader(X_SHARER_USER_ID_HEADER) Long id,
                           @PathVariable("itemId") Long itemId) {
         return itemService.update(newItemDto, id, itemId);
     }
 
     @DeleteMapping("/{itemId}")
-    public void delete(@RequestHeader("X-Sharer-User-Id") long userId,
+    public void delete(@RequestHeader(X_SHARER_USER_ID_HEADER) long userId,
                        @PathVariable(name = "itemId") long itemId) {
         itemService.delete(userId, itemId);
     }

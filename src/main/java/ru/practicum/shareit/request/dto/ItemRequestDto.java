@@ -13,7 +13,7 @@ public class ItemRequestDto {
 
     private Long id;
 
-    //@NotBlank(message = "Должен быть указан id пользователя, создавшего запрос")
+    @NotBlank(message = "Должен быть указан id пользователя, создавшего запрос")
     private Long requesterId;
 
     @NotBlank(message = "Должно быть указано описание вещи")

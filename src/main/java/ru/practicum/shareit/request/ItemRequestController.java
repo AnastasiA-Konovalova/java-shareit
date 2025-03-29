@@ -22,9 +22,10 @@ import java.util.List;
 public class ItemRequestController {
 
     private final ItemRequestService itemRequestService;
+    private static final String X_SHARER_USER_ID_HEADER = "X-Sharer-User-Id";
 
     @GetMapping
-    public List<ItemRequestDto> getUserRequests(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemRequestDto> getUserRequests(@RequestHeader(X_SHARER_USER_ID_HEADER) Long userId) {
         return itemRequestService.getUserRequest(userId);
     }
 
@@ -40,7 +41,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ItemRequestDto create(@Valid @RequestBody ItemRequestDto itemRequestDto,
-                                 @RequestHeader("X-Sharer-User-Id") Long userId) {
+                                 @RequestHeader(X_SHARER_USER_ID_HEADER) Long userId) {
         return itemRequestService.create(itemRequestDto, userId);
     }
 }

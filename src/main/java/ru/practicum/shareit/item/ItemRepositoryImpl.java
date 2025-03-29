@@ -48,9 +48,8 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public Item update(Item newItem, Long itemId) {
-        Optional<Item> optionalItem = getItemById(itemId);
-
+    public Item update(Item newItem) {
+        Optional<Item> optionalItem = getItemById(newItem.getId());
         Item item = optionalItem.orElseThrow(() -> new NotFoundException("Такой предмет отсутствует в списке"));
         item.setName(newItem.getName());
         item.setDescription(newItem.getDescription());
@@ -61,7 +60,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public void delete(Long userId, Long itemId) {
+    public void delete(Long itemId) {
         Optional<Item> optionalItem = getItemById(itemId);
 
         Item item = optionalItem.orElseThrow(() -> new NotFoundException("Такой предмет отсутствует в списке"));

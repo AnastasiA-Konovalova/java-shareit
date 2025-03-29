@@ -15,7 +15,7 @@ public interface ItemRepository {
 
     Item create(Long userId, Item item);
 
-    Item update(Item newItem, Long itemId);
+    Item update(Item newItem);
 
-    void delete(Long userId, Long itemId);
+    void delete(Long itemId);
 }

@@ -27,6 +27,7 @@ public class ItemMapper {
     }
 
     public static Item toEntity(Item item, ItemDto itemDto) {
+        item.setId(itemDto.getId());
         item.setName(itemDto.getName());
         item.setDescription(itemDto.getDescription());
         item.setAvailable(itemDto.getAvailable());
@@ -36,6 +37,7 @@ public class ItemMapper {
     }
 
     public static Item toEntity(Item item, ItemCreateDto itemDto) {
+        item.setId(itemDto.getId());
         item.setName(itemDto.getName());
         item.setDescription(itemDto.getDescription());
         item.setAvailable(itemDto.getAvailable());
