@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking.dto;
+package ru.practicum.shareit.booking.model;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * TODO Sprint add-bookings.
  */
 @Data
-public class BookingDto {
+public class Booking {
 
     private Long id;
 
@@ -29,4 +29,3 @@ public class BookingDto {
 
     private BookingStatus bookingStatus;
 }
-
