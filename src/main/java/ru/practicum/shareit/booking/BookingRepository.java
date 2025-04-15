@@ -11,22 +11,16 @@ import java.util.List;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    //@Query("select b from bookings as b where b.item.id :itemsIds")
     List<Booking> findByBookerIdOrderByStartBookingDesc(Long userId);
-    //all
+
     List<Booking> findByBookerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc(
             Long bookerId, LocalDateTime start, LocalDateTime end);
-    //current
 
     List<Booking> findByBookerIdAndEndBookingBeforeOrderByStartBookingDesc(Long bookerId, LocalDateTime start);
-    //past
 
     List<Booking> findByBookerIdAndStartBookingAfterOrderByStartBookingDesc(Long bookerId, LocalDateTime start);
-    //future
 
     List<Booking> findByBookerIdAndBookingStatusOrderByStartBookingDesc(Long userId, BookingStatus status);
-    //waiting
-    //rejected
 
     List<Booking> findByItemOwnerIdOrderByStartBookingDesc(Long ownerId);
 
@@ -34,8 +28,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             Long ownerId, LocalDateTime start, LocalDateTime end);
 
     List<Booking> findByItemOwnerIdAndEndBookingBeforeOrderByStartBookingDesc(Long ownerId, LocalDateTime time);
-
-    List<Booking> findByItemOwnerIdAndStartBookingAfterOrderByStartBookingDesc(Long ownerId, LocalDateTime time);
 
     List<Booking> findByItemOwnerIdAndBookingStatusOrderByStartBookingDesc(Long ownerId, BookingStatus status);
 
