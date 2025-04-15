@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
@@ -23,7 +24,6 @@ import java.util.List;
 public class ItemController {
 
     private static final String X_SHARER_USER_ID_HEADER = "X-Sharer-User-Id";
-
     private final ItemService itemService;
 
     @GetMapping
@@ -59,5 +59,12 @@ public class ItemController {
     public void delete(@RequestHeader(X_SHARER_USER_ID_HEADER) long userId,
                        @PathVariable(name = "itemId") long itemId) {
         itemService.delete(userId, itemId);
+    }
+
+    @PostMapping("{itemId}/comment")
+    public CommentDto saveComment(@Valid @RequestBody CommentDto commentDto,
+                                  @PathVariable Long itemId,
+                                  @RequestHeader(X_SHARER_USER_ID_HEADER) Long userId) {
+        return itemService.saveComment(commentDto, itemId, userId);
     }
 }
