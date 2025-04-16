@@ -35,31 +35,3 @@ CREATE TABLE IF NOT EXISTS comments (
 );
 
 ALTER TABLE comments ADD COLUMN created TIMESTAMP;
-
-
-INSERT INTO users (email, name)
-VALUES ('email1@mail.ru', 'userName1');
-
-INSERT INTO users (email, name)
-VALUES ('email2@mail.ru', 'userName2');
-
-INSERT INTO users (email, name)
-VALUES ('email3@mail.ru', 'userName3');
-
-INSERT INTO items (name, description, available, owner_id)
-VALUES ('itemName1', 'itemDescription1', false,
-(SELECT id FROM USERS WHERE id = 1));
-
-INSERT INTO items (name, description, available, owner_id)
-VALUES ('itemName2', 'itemDescription2', false,
-(SELECT id FROM USERS WHERE id = 2));
-
-INSERT INTO bookings (item_id, booker_id, start_booking, end_booking, status)
-VALUES ((SELECT id FROM items WHERE id = 1),
-        (SELECT id FROM users WHERE id = 1),
-        '2025-04-12 10:00:00',
-        '2025-04-13 10:00:00',
-        'WAITING');
-
-INSERT INTO comments (text, item_id, author_id, created)
-VALUES ('Отличная вещь!', 1, 2, now());

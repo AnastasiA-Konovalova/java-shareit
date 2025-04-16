@@ -33,5 +33,6 @@ public class Comment {
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
+    @Column(name = "created")
     private LocalDateTime created;
 }
