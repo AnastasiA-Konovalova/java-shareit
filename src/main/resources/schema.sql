@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     booker_id BIGINT NOT NULL,
     start_booking TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     end_booking TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    status VARCHAR(255) DEFAULT 'WAITING',
+    status VARCHAR(255) DEFAULT 'WAITING' NOT NULL,
     CONSTRAINT fk_bookings_items FOREIGN KEY (item_id) REFERENCES items (id),
     CONSTRAINT fk_bookings_users FOREIGN KEY (booker_id) REFERENCES users (id)
 );
