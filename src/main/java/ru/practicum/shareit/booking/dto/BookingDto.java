@@ -25,7 +25,5 @@ public class BookingDto {
 
     private Item item;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
     private BookingStatus status = BookingStatus.WAITING;
 }
