@@ -21,8 +21,12 @@ import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -39,26 +43,44 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> getByOwnerId(Long userId) {
         User user = checkUser(userId);
         List<Item> items = itemRepository.findByOwnerId(user.getId());
+        LocalDateTime now = LocalDateTime.now();
 
-        return items.stream().map(item -> {
+        Map<Long, List<CommentDto>> commentsByItemId = new HashMap<>();
+        for (Comment comment : commentRepository.findAllByItemIn(items)) {
+            commentsByItemId.computeIfAbsent(comment.getItem().getId(), i -> new ArrayList<>())
+                    .add(CommentMapper.toDto(comment));
+        }
+
+        Map<Long, List<Booking>> bookingsByItemId = new HashMap<>();
+        for (Booking booking : bookingRepository.findByItemInAndStatusNot(items, BookingStatus.REJECTED)) {
+            bookingsByItemId.computeIfAbsent(booking.getItem().getId(), i -> new ArrayList<>())
+                    .add(booking);
+        }
+
+        List<ItemDto> itemDtos = new ArrayList<>();
+        for (Item item : items) {
             ItemDto itemDto = ItemMapper.toDto(item);
-            List<CommentDto> commentDtos = commentRepository.findAllByItem(item)
-                    .stream()
-                    .map(CommentMapper::toDto)
-                    .toList();
-            itemDto.setComments(commentDtos);
-            Booking lastBooking = bookingRepository
-                    .findTopByItemIdAndStartBookingBeforeOrderByStartBookingDesc(item.getId(), LocalDateTime.now());
+            itemDto.setComments(commentsByItemId.getOrDefault(item.getId(), Collections.emptyList()));
+
+            List<Booking> itemBookings = bookingsByItemId.getOrDefault(item.getId(), Collections.emptyList());
+            Booking lastBooking = itemBookings.stream()
+                    .filter(b -> b.getStartBooking().isBefore(now))
+                    .max(Comparator.comparing(Booking::getStartBooking))
+                    .orElse(null);
             if (lastBooking != null) {
                 itemDto.setLastBooking(BookingMapper.toDto(lastBooking));
             }
-            Booking nextBooking = bookingRepository
-                    .findTopByItemIdAndStartBookingAfterOrderByStartBookingAsc(item.getId(), LocalDateTime.now());
+
+            Booking nextBooking = itemBookings.stream()
+                    .filter(b -> b.getStartBooking().isAfter(now))
+                    .min(Comparator.comparing(Booking::getStartBooking))
+                    .orElse(null);
             if (nextBooking != null) {
                 itemDto.setNextBooking(BookingMapper.toDto(nextBooking));
             }
-            return itemDto;
-        }).toList();
+            itemDtos.add(itemDto);
+        }
+        return itemDtos;
     }
 
     @Override
