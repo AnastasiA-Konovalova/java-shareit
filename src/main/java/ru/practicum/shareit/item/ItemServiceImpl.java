@@ -52,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         Map<Long, List<Booking>> bookingsByItemId = new HashMap<>();
-        for (Booking booking : bookingRepository.findByItemInAndStatusNot(items, BookingStatus.REJECTED)) {
+        for (Booking booking : bookingRepository.findByItemInAndBookingStatusNot(items, BookingStatus.REJECTED)) {
             bookingsByItemId.computeIfAbsent(booking.getItem().getId(), i -> new ArrayList<>())
                     .add(booking);
         }
