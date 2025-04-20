@@ -14,8 +14,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByBookerIdOrderByStartBookingDesc(Long userId);
 
-    List<Booking> findByBookerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc(
-            Long bookerId, LocalDateTime start, LocalDateTime end);
+    List<Booking> findByBookerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc(Long bookerId, LocalDateTime start, LocalDateTime end);
 
     List<Booking> findByBookerIdAndEndBookingBeforeOrderByStartBookingDesc(Long bookerId, LocalDateTime start);
 
@@ -25,15 +24,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByItemOwnerIdOrderByStartBookingDesc(Long ownerId);
 
-    List<Booking> findByItemOwnerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc(
-            Long ownerId, LocalDateTime start, LocalDateTime end);
+    List<Booking> findByItemOwnerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc(Long ownerId, LocalDateTime start, LocalDateTime end);
 
     List<Booking> findByItemOwnerIdAndEndBookingBeforeOrderByStartBookingDesc(Long ownerId, LocalDateTime time);
 
     List<Booking> findByItemOwnerIdAndBookingStatusOrderByStartBookingDesc(Long ownerId, BookingStatus status);
 
-    List<Booking> findByBookerIdAndItemIdAndEndBookingBeforeAndBookingStatus
-            (Long bookerId, Long itemId, LocalDateTime time, BookingStatus status);
+    List<Booking> findByBookerIdAndItemIdAndEndBookingBeforeAndBookingStatus(Long bookerId, Long itemId, LocalDateTime time, BookingStatus status);
 
     List<Booking> findByItemInAndStatusNot(List<Item> items, BookingStatus status);
 }
