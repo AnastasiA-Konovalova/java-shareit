@@ -1,32 +1,26 @@
 package ru.practicum.shareit.booking.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.booking.enums.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-bookings.
- */
 @Data
 public class BookingDto {
 
     private Long id;
 
-    @NotBlank(message = "Должно быть указано начало бронирования")
-    private LocalDateTime beginBooking;
+    private LocalDateTime start;
 
-    @NotBlank(message = "Должен быть указан конец бронирования")
-    private LocalDateTime endBooking;
+    private LocalDateTime end;
 
-    @NotBlank(message = "Должен быть передан предмет, запрашиваемый к бронированию")
+    private Long itemId;
+
+    private User booker;
+
     private Item item;
 
-    @NotBlank(message = "Должен быть указан id пользователя, посылающего запрос на бронирование")
-    private Long booker;
-
-    private BookingStatus bookingStatus;
+    private BookingStatus status = BookingStatus.WAITING;
 }
-

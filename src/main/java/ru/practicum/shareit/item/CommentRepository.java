@@ -2,14 +2,15 @@ package ru.practicum.shareit.item;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
 @Repository
-public interface ItemRepository extends JpaRepository<Item, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    List<Item> findByOwnerId(Long userId);
+    List<Comment> findAllByItem(Item item);
 
-    List<Item> findByNameContainingIgnoreCaseAndAvailableTrue(String name);
+    List<Comment> findAllByItemIn(List<Item> items);
 }
