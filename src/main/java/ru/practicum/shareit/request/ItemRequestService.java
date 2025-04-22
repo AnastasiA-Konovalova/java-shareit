@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ItemRequestService {
 
-    ItemRequestDto getById(Long requestId);
+    ItemRequestDto getById(Long requestId, Long userId);
 
     List<ItemRequestDto> getAll();
 

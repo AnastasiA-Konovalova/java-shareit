@@ -1,23 +1,21 @@
 package ru.practicum.shareit.request.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @Data
 public class ItemRequestDto {
 
     private Long id;
 
-    @NotBlank(message = "Должен быть указан id пользователя, создавшего запрос")
-    private Long requesterId;
+    private Long requestorId;
 
-    @NotBlank(message = "Должно быть указано описание вещи")
     private String description;
 
-    private LocalDateTime requestCreate;
+    private LocalDateTime created;
+
+    private List<ItemDto> items;
 }

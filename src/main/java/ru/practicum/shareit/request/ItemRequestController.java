@@ -13,9 +13,6 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 import java.util.List;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "/requests")
@@ -29,9 +26,10 @@ public class ItemRequestController {
         return itemRequestService.getUserRequest(userId);
     }
 
-    @GetMapping("/id/{requestId}")
-    public ItemRequestDto getRequestById(@PathVariable("requestId") Long requestId) {
-        return itemRequestService.getById(requestId);
+    @GetMapping("/{requestId}")
+    public ItemRequestDto getRequestById(@RequestHeader(X_SHARER_USER_ID_HEADER) Long userId,
+                                         @PathVariable("requestId") Long requestId) {
+        return itemRequestService.getById(requestId, userId);
     }
 
     @GetMapping("/all")

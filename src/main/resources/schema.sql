@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS items (
     description VARCHAR(255) NOT NULL,
     available BOOLEAN NOT NULL,
     owner_id BIGINT NOT NULL,
+    request_id BIGINT,
     CONSTRAINT fk_items_users FOREIGN KEY (owner_id) REFERENCES users (id)
 );
 
@@ -33,4 +34,12 @@ CREATE TABLE IF NOT EXISTS comments (
     created TIMESTAMP,
     CONSTRAINT fk_comments_items FOREIGN KEY (item_id) REFERENCES items (id),
     CONSTRAINT fk_comments_users FOREIGN KEY (author_id) REFERENCES users (id)
+);
+
+CREATE TABLE IF NOT EXISTS requests (
+    id SERIAL PRIMARY KEY,
+    description VARCHAR(255) NOT NULL,
+    requestor_id BIGINT NOT NULL,
+    request_create TIMESTAMP,
+    CONSTRAINT fk_users_id FOREIGN KEY (requestor_id) REFERENCES users(id)
 );
