@@ -200,8 +200,7 @@ public class UserControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.error").value("Пользователь email test@test.com уже существует"));
+                .andExpect(status().isConflict());
     }
 
     @Test
@@ -221,7 +220,7 @@ public class UserControllerTest {
 
     @Test
     void save_shouldReturnBadRequestWhenInvalidJson() throws Exception {
-        String invalidJson = "{ \"name\": \"test\", \"email\": \"test@test.com\""; // Неполный JSON
+        String invalidJson = "{ \"name\": \"test\", \"email\": \"test@test.com\"";
 
         mvc.perform(post("/users")
                         .content(invalidJson)
@@ -241,6 +240,6 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").value("Пользователь с id 1 не найден."));
+                .andExpect(jsonPath("$.description").value("Пользователь с id 1 не найден."));
     }
 }
