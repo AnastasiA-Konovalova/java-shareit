@@ -128,7 +128,6 @@ public class ItemServiceImpl implements ItemService {
             item.setRequest(itemRequest);
         }
         Item savedItem = itemRepository.save(item);
-        log.info("Creating item with requestId: {}", itemDto.getRequestId());
         return ItemMapper.toCreateDto(savedItem);
     }
 
