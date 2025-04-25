@@ -18,7 +18,7 @@ public class ItemDto {
 
     private Boolean available;
 
-    private User ownerId;
+    private User owner;
 
     private List<CommentDto> comments;
 

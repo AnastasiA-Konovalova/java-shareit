@@ -144,7 +144,7 @@ public class BookingServiceImpl implements BookingService {
 
     private void checkBookingByOwnerAndBooker(Booking booking, Long userId) {
         if (!booking.getItem().getOwner().getId().equals(userId) && !booking.getBooker().getId().equals(userId)) {
-            throw new NotFoundException("Запрошенные данные о бронировании не могут быть предоставлены в силу" +
+            throw new NotFoundException("Запрошенные данные о бронировании не могут быть предоставлены в силу " +
                     " несоответствия пользователя");
         }
     }

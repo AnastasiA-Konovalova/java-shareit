@@ -205,7 +205,7 @@ public class ItemServiceImplTest {
         assertEquals(item1.getName(), itemDto.getName());
         assertEquals(item1.getDescription(), itemDto.getDescription());
         assertTrue(itemDto.getAvailable());
-        assertEquals(item1.getOwner(), itemDto.getOwnerId());
+        assertEquals(item1.getOwner(), itemDto.getOwner());
     }
 
     @Test
