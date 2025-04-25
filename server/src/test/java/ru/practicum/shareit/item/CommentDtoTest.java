@@ -51,12 +51,12 @@ public class CommentDtoTest {
     @Test
     void deserializeShouldDeserializeCommentDto() throws Exception {
         String jsonContent = """
-                {
+                 {
                     "id": 1,
                     "text": "Great item!",
                     "authorName": "test",
                     "created": "2025-04-23T12:00:00"
-                }
+                 }
                 """;
         // Десериализация и проверки
 
@@ -71,12 +71,12 @@ public class CommentDtoTest {
     @Test
     void deserializeShouldFailWhenTextIsBlank() throws Exception {
         String jsonContent = """
-                {
+                 {
                     "id": 1,
                     "text": "",
                     "authorName": "test",
                     "created": "2025-04-23T12:00:00"
-                }
+                 }
                 """;
         // Десериализация и проверки
 
@@ -91,12 +91,12 @@ public class CommentDtoTest {
     @Test
     void deserialize_shouldFailWhenTextIsNull() throws Exception {
         String jsonContent = """
-                {
+                 {
                     "id": 1,
                     "text": null,
                     "authorName": "test",
                     "created": "2025-04-23T12:00:00"
-                }
+                 }
                 """;
         // Десериализация и проверки
 

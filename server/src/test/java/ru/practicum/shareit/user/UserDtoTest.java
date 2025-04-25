@@ -47,11 +47,11 @@ public class UserDtoTest {
     @Test
     void deserializeShouldDeserializeUserDto() throws Exception {
         String jsonContent = """
-                {
+                 {
                     "id": 1,
                     "email": "user@email.com",
                     "name": "User Name"
-                }
+                 }
                 """;
         // Десериализация и проверки
 
@@ -65,12 +65,11 @@ public class UserDtoTest {
     @Test
     void deserializeShouldFailWhenEmailIsInvalid() throws Exception {
         String jsonContent = """
-                //JSON
-                {
+                 {
                     "id": 1,
                     "email": "invalid-email",
                     "name": "User Name"
-                }
+                 }
                 """;
         // Десериализация и проверки
 

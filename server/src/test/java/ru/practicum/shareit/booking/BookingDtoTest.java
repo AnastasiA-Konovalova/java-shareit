@@ -61,17 +61,17 @@ public class BookingDtoTest {
     @Test
     void deserializeShouldDeserializeBookingDto() throws Exception {
         String jsonContent = """
-                {
+                 {
                     "id": 1,
                     "itemId": 1,
-                    "booker": {
+                    "booker":  {
                         "name": "User name1",
                         "email": "user@email1"
-                    },
+                     },
                     "start": "2025-04-23T12:00:00",
                     "end": "2025-04-23T13:00:00",
                     "status": "APPROVED"
-                }
+                 }
                 """;
         // Десериализация и проверки
 
