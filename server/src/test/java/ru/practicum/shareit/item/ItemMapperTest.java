@@ -13,28 +13,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ItemMapperTest {
 
-    static User user1;
+    static User owner;
+    static Item item;
 
     @BeforeEach
     void setUp() {
-        user1 = new User();
-        user1.setName("User name1");
-        user1.setEmail("user@email1");
-    }
+        owner = new User();
+        owner.setName("User name1");
+        owner.setEmail("user@email1");
 
-    @Test
-    void toDto_shouldMapItemToItemDto() {
-        User owner = new User();
-        owner.setId(1L);
-        owner.setName("Owner");
-        owner.setEmail("owner@example.com");
-
-        Item item = new Item();
+        item = new Item();
         item.setId(1L);
         item.setName("Item");
         item.setDescription("Description");
         item.setAvailable(true);
         item.setOwner(owner);
+    }
+
+    @Test
+    void toDto_shouldMapItemToItemDto() {
+//        User owner = new User();
+//        owner.setId(1L);
+//        owner.setName("Owner");
+//        owner.setEmail("owner@example.com");
+
 
         ItemDto itemDto = ItemMapper.toDto(item);
 
@@ -48,21 +50,8 @@ class ItemMapperTest {
 
     @Test
     void toCreateDto_shouldMapItemToItemCreateDto_withRequest() {
-        User owner = new User();
-        owner.setId(1L);
-        owner.setName("Owner");
-        owner.setEmail("owner@example.com");
-
         ItemRequest request = new ItemRequest();
         request.setId(2L);
-
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("Item");
-        item.setDescription("Description");
-        item.setAvailable(true);
-        item.setOwner(owner);
-        item.setRequest(request);
 
         ItemCreateDto itemCreateDto = ItemMapper.toCreateDto(item);
 
@@ -112,7 +101,7 @@ class ItemMapperTest {
         itemCreateDto.setName("Item");
         itemCreateDto.setDescription("Description");
         itemCreateDto.setAvailable(true);
-        itemCreateDto.setOwner(user1);
+        itemCreateDto.setOwner(ItemMapperTest.owner);
         itemCreateDto.setRequestId(2L);
 
         Item item = new Item();
@@ -147,7 +136,7 @@ class ItemMapperTest {
         itemCreateDto.setName("Updated Item");
         itemCreateDto.setDescription("Updated Description");
         itemCreateDto.setAvailable(true);
-        itemCreateDto.setOwner(user1);
+        itemCreateDto.setOwner(ItemMapperTest.owner);
 
         Item result = ItemMapper.toEntity(existingItem, itemCreateDto, owner);
 

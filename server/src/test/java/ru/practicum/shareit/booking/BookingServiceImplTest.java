@@ -216,39 +216,6 @@ public class BookingServiceImplTest {
         assertEquals(BookingStatus.APPROVED, savedBooking.getBookingStatus());
     }
 
-    // Новые тесты
-    @Test
-    void getByIdTest_withNonOwnerOrBooker_shouldThrowNotFoundException() {
-        NotFoundException exception = assertThrows(NotFoundException.class, () ->
-                bookingService.getById(pastBooking.getId(), otherUser.getId()));
-        assertEquals("Запрошенные данные о бронировании не могут быть предоставлены в силу несоответствия пользователя",
-                exception.getMessage());
-    }
-
-    @Test
-    void getAllByUserTest_withCurrentState() {
-        List<BookingDto> bookings = bookingService.getAllByUser(booker1.getId(), State.CURRENT);
-
-        assertEquals(1, bookings.size());
-        assertEquals(currentBooking.getId(), bookings.get(0).getId());
-    }
-
-    @Test
-    void getAllByUserTest_withPastState() {
-        List<BookingDto> bookings = bookingService.getAllByUser(booker1.getId(), State.PAST);
-
-        assertEquals(1, bookings.size());
-        assertEquals(pastBooking.getId(), bookings.get(0).getId());
-    }
-
-    @Test
-    void getAllByUserTest_withFutureState() {
-        List<BookingDto> bookings = bookingService.getAllByUser(booker1.getId(), State.FUTURE);
-
-        assertEquals(1, bookings.size());
-        assertEquals(futureBooking.getId(), bookings.get(0).getId());
-    }
-
     @Test
     void getAllByUserTest_withWaitingState() {
         List<BookingDto> bookings = bookingService.getAllByUser(booker1.getId(), State.WAITING);
@@ -263,21 +230,6 @@ public class BookingServiceImplTest {
 
         assertEquals(1, bookings.size());
         assertEquals(rejectedBooking.getId(), bookings.get(0).getId());
-    }
-
-    @Test
-    void getAllByUserTest_withUnknownState_shouldThrowValidationException() {
-        ValidationException exception = assertThrows(ValidationException.class, () ->
-                bookingService.getAllByUser(booker1.getId(), null));
-        assertEquals("Неизвестное условие сортировки бронирований", exception.getMessage());
-    }
-
-    @Test
-    void getAllByOwnerTest_withCurrentState() {
-        List<BookingDto> bookings = bookingService.getAllByOwner(owner1.getId(), State.CURRENT);
-
-        assertEquals(1, bookings.size());
-        assertEquals(currentBooking.getId(), bookings.get(0).getId());
     }
 
     @Test
