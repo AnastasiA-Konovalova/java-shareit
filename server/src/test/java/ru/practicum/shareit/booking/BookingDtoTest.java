@@ -61,6 +61,7 @@ public class BookingDtoTest {
     @Test
     void deserializeShouldDeserializeBookingDto() throws Exception {
         String jsonContent = """
+                //JSON
                 {
                     "id": 1,
                     "itemId": 1,

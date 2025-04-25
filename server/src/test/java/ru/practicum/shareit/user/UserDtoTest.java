@@ -47,6 +47,7 @@ public class UserDtoTest {
     @Test
     void deserializeShouldDeserializeUserDto() throws Exception {
         String jsonContent = """
+                //JSON
                 {
                     "id": 1,
                     "email": "user@email.com",
@@ -64,6 +65,7 @@ public class UserDtoTest {
     @Test
     void deserializeShouldFailWhenEmailIsInvalid() throws Exception {
         String jsonContent = """
+                //JSON
                 {
                     "id": 1,
                     "email": "invalid-email",

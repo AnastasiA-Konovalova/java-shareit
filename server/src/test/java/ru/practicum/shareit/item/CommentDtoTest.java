@@ -51,6 +51,7 @@ public class CommentDtoTest {
     @Test
     void deserializeShouldDeserializeCommentDto() throws Exception {
         String jsonContent = """
+                //JSON
                 {
                     "id": 1,
                     "text": "Great item!",
@@ -70,6 +71,7 @@ public class CommentDtoTest {
     @Test
     void deserializeShouldFailWhenTextIsBlank() throws Exception {
         String jsonContent = """
+                //JSON
                 {
                     "id": 1,
                     "text": "",
@@ -89,6 +91,7 @@ public class CommentDtoTest {
     @Test
     void deserialize_shouldFailWhenTextIsNull() throws Exception {
         String jsonContent = """
+                //JSON
                 {
                     "id": 1,
                     "text": null,
