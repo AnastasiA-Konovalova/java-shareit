@@ -120,7 +120,6 @@ public class BookingServiceImplTest {
         entityManager.flush();
     }
 
-    // Существующие тесты (оставлены без изменений)
     @Test
     void getByIdTest() {
         BookingDto bookingDto = bookingService.getById(pastBooking.getId(), booker1.getId());

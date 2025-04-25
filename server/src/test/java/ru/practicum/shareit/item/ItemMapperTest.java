@@ -18,6 +18,7 @@ class ItemMapperTest {
     static User owner;
     static Item item;
     static ItemRequest request;
+    static ItemCreateDto itemCreateDto;
 
     @BeforeEach
     void setUp() {
@@ -39,16 +40,18 @@ class ItemMapperTest {
         item.setAvailable(true);
         item.setOwner(owner);
         item.setRequest(request);
+
+        itemCreateDto = new ItemCreateDto();
+        itemCreateDto.setName("Item");
+        itemCreateDto.setDescription("Description");
+        itemCreateDto.setAvailable(true);
+        itemCreateDto.setOwner(ItemMapperTest.owner);
+        itemCreateDto.setRequestId(2L);
+
     }
 
     @Test
-    void toDto_shouldMapItemToItemDto() {
-//        User owner = new User();
-//        owner.setId(1L);
-//        owner.setName("Owner");
-//        owner.setEmail("owner@example.com");
-
-
+    void toDtoShouldMapItemToItemDto() {
         ItemDto itemDto = ItemMapper.toDto(item);
 
         assertThat(itemDto).isNotNull();
@@ -60,8 +63,9 @@ class ItemMapperTest {
     }
 
     @Test
-    void toCreateDto_shouldMapItemToItemCreateDto_withRequest() {
+    void toCreateDtoShouldMapItemToItemCreateDtoWithRequest() {
         ItemCreateDto itemCreateDto = ItemMapper.toCreateDto(item);
+
         assertThat(itemCreateDto).isNotNull();
         assertThat(itemCreateDto.getId()).isEqualTo(2L);
         assertThat(itemCreateDto.getName()).isEqualTo("Item");
@@ -72,19 +76,7 @@ class ItemMapperTest {
     }
 
     @Test
-    void toEntity_shouldMapItemCreateDtoToItem() {
-        User owner = new User();
-        owner.setId(1L);
-        owner.setName("Owner");
-        owner.setEmail("owner@example.com");
-
-        ItemCreateDto itemCreateDto = new ItemCreateDto();
-        itemCreateDto.setName("Item");
-        itemCreateDto.setDescription("Description");
-        itemCreateDto.setAvailable(true);
-        itemCreateDto.setOwner(ItemMapperTest.owner);
-        itemCreateDto.setRequestId(2L);
-
+    void toEntityShouldMapItemCreateDtoToItem() {
         Item item = new Item();
         item.setId(1L);
 
@@ -100,12 +92,7 @@ class ItemMapperTest {
     }
 
     @Test
-    void toEntity_shouldUpdateExistingItem() {
-        User owner = new User();
-        owner.setId(1L);
-        owner.setName("Owner");
-        owner.setEmail("owner@example.com");
-
+    void toEntityShouldUpdateExistItem() {
         Item existingItem = new Item();
         existingItem.setId(1L);
         existingItem.setName("Old Item");
@@ -113,21 +100,14 @@ class ItemMapperTest {
         existingItem.setAvailable(false);
         existingItem.setOwner(new User());
 
-        ItemCreateDto itemCreateDto = new ItemCreateDto();
-        itemCreateDto.setName("Updated Item");
-        itemCreateDto.setDescription("Updated Description");
-        itemCreateDto.setAvailable(true);
-        itemCreateDto.setOwner(ItemMapperTest.owner);
-
         Item result = ItemMapper.toEntity(existingItem, itemCreateDto, owner);
 
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getName()).isEqualTo("Updated Item");
-        assertThat(result.getDescription()).isEqualTo("Updated Description");
+        assertThat(result.getName()).isEqualTo("Item");
+        assertThat(result.getDescription()).isEqualTo("Description");
         assertThat(result.getAvailable()).isEqualTo(true);
         assertThat(result.getOwner()).isEqualTo(owner);
         assertThat(result.getRequest()).isNull();
     }
 }
-

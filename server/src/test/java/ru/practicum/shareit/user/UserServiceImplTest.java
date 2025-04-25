@@ -181,5 +181,26 @@ public class UserServiceImplTest {
     @Test
     void deleteTestWithInvalidId() {
         userService.delete(999L);
+
+        List<User> users = userRepository.findAll();
+        assertEquals(2, users.size());
+    }
+
+
+    @Test
+    void updateTestWithNullName() {
+        UserDto updateDto = new UserDto();
+        updateDto.setName(null);
+        updateDto.setEmail("updated@email.com");
+
+        UserDto updatedUserDto = userService.update(updateDto, user1.getId());
+
+        assertEquals(user1.getId(), updatedUserDto.getId());
+        assertEquals("User1", updatedUserDto.getName()); // Имя не изменилось
+        assertEquals("updated@email.com", updatedUserDto.getEmail());
+
+        User updatedUser = entityManager.find(User.class, user1.getId());
+        assertEquals("User1", updatedUser.getName());
+        assertEquals("updated@email.com", updatedUser.getEmail());
     }
 }
