@@ -51,7 +51,6 @@ public class UserServiceImplTest {
         entityManager.flush();
     }
 
-    // Тесты для getAll
     @Test
     void getAllTest() {
         List<UserDto> users = userService.getAll();
@@ -71,7 +70,6 @@ public class UserServiceImplTest {
         assertTrue(users.isEmpty());
     }
 
-    // Тесты для getById
     @Test
     void getByIdTest() {
         UserDto userDto = userService.getById(user1.getId());
@@ -101,7 +99,6 @@ public class UserServiceImplTest {
         assertEquals("New User", savedUserDto.getName());
         assertEquals("newuser@email.com", savedUserDto.getEmail());
 
-        // Проверяем в базе
         User savedUser = entityManager.find(User.class, savedUserDto.getId());
         assertEquals("New User", savedUser.getName());
         assertEquals("newuser@email.com", savedUser.getEmail());
@@ -130,7 +127,6 @@ public class UserServiceImplTest {
         assertEquals("Updated User", updatedUserDto.getName());
         assertEquals("updated@email.com", updatedUserDto.getEmail());
 
-        // Проверяем в базе
         User updatedUser = entityManager.find(User.class, user1.getId());
         assertEquals("Updated User", updatedUser.getName());
         assertEquals("updated@email.com", updatedUser.getEmail());
@@ -140,15 +136,14 @@ public class UserServiceImplTest {
     void updateTestWithNullEmail() {
         UserDto updateDto = new UserDto();
         updateDto.setName("Updated Name");
-        updateDto.setEmail(null); // Email не обновляется
+        updateDto.setEmail(null);
 
         UserDto updatedUserDto = userService.update(updateDto, user1.getId());
 
         assertEquals(user1.getId(), updatedUserDto.getId());
         assertEquals("Updated Name", updatedUserDto.getName());
-        assertEquals("user1@email.com", updatedUserDto.getEmail()); // Email не изменился
+        assertEquals("user1@email.com", updatedUserDto.getEmail());
 
-        // Проверяем в базе
         User updatedUser = entityManager.find(User.class, user1.getId());
         assertEquals("Updated Name", updatedUser.getName());
         assertEquals("user1@email.com", updatedUser.getEmail());
@@ -175,7 +170,6 @@ public class UserServiceImplTest {
                 userService.update(updateDto, 999L));
     }
 
-    // Тесты для delete
     @Test
     void deleteTest() {
         userService.delete(user1.getId());
@@ -186,6 +180,6 @@ public class UserServiceImplTest {
 
     @Test
     void deleteTestWithInvalidId() {
-        userService.delete(999L); // Не должно выбросить исключение, так как deleteById игнорирует несуществующие id
+        userService.delete(999L);
     }
 }

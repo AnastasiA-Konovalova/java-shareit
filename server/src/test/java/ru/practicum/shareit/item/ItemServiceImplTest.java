@@ -134,7 +134,7 @@ public class ItemServiceImplTest {
         futureBooking.setEndBooking(now.plusDays(2));
         futureBooking.setBookingStatus(BookingStatus.APPROVED);
         entityManager.persist(futureBooking);
-//
+
         rejectedBooking = new Booking();
         rejectedBooking.setItem(item1);
         rejectedBooking.setBooker(user1);
@@ -195,7 +195,6 @@ public class ItemServiceImplTest {
         assertEquals(1, itemDto1.getComments().size());
         assertEquals("Great item!", itemDto1.getComments().get(0).getText());
         assertNotNull(itemDto1.getLastBooking());
-        System.out.println(itemDto1.getLastBooking());
         assertNotNull(itemDto1.getNextBooking());
     }
 

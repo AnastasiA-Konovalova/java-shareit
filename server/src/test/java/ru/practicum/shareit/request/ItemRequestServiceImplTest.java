@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.dto.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserServiceImpl;
 import ru.practicum.shareit.user.model.User;
@@ -18,7 +17,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @Import({ItemRequestServiceImpl.class, UserServiceImpl.class})
@@ -39,7 +39,7 @@ public class ItemRequestServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        now = LocalDateTime.of(2025, 4, 23, 12, 0); // Фиксированное время
+        now = LocalDateTime.of(2025, 4, 23, 12, 0);
 
         user1 = new User();
         user1.setName("User");
@@ -103,9 +103,9 @@ public class ItemRequestServiceImplTest {
         List<ItemRequestDto> requests = itemRequestService.getAll();
 
         assertEquals(2, requests.size());
-        assertEquals(request2.getId(), requests.get(1).getId()); // Порядок не гарантирован
+        assertEquals(request2.getId(), requests.get(1).getId());
         assertEquals(request1.getId(), requests.get(0).getId());
-        assertTrue(requests.get(0).getItems() == null || requests.get(0).getItems().isEmpty()); // getAll не заполняет items
+        assertTrue(requests.get(0).getItems() == null || requests.get(0).getItems().isEmpty());
     }
 
     @Test
@@ -113,9 +113,9 @@ public class ItemRequestServiceImplTest {
         List<ItemRequestDto> requests = itemRequestService.getUserRequest(user1.getId());
 
         assertEquals(2, requests.size());
-        assertEquals(request2.getId(), requests.get(0).getId()); // Самый новый (now)
-        assertEquals(request1.getId(), requests.get(1).getId()); // Более старый (now.minusDays(1))
-        assertTrue(requests.get(0).getItems() == null || requests.get(0).getItems().isEmpty()); // getUserRequest не заполняет items
+        assertEquals(request2.getId(), requests.get(0).getId());
+        assertEquals(request1.getId(), requests.get(1).getId());
+        assertTrue(requests.get(0).getItems() == null || requests.get(0).getItems().isEmpty());
     }
 
     @Test
