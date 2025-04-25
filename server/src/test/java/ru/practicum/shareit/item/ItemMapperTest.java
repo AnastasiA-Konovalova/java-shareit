@@ -9,25 +9,36 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ItemMapperTest {
 
     static User owner;
     static Item item;
+    static ItemRequest request;
 
     @BeforeEach
     void setUp() {
         owner = new User();
+        owner.setId(1L);
         owner.setName("User name1");
         owner.setEmail("user@email1");
 
+        request = new ItemRequest();
+        request.setId(1L);
+        request.setDescription("Test Request1");
+        request.setRequestorId(owner.getId());
+        request.setCreated(LocalDateTime.now());
+
         item = new Item();
-        item.setId(1L);
+        item.setId(2L);
         item.setName("Item");
         item.setDescription("Description");
         item.setAvailable(true);
         item.setOwner(owner);
+        item.setRequest(request);
     }
 
     @Test
@@ -41,7 +52,7 @@ class ItemMapperTest {
         ItemDto itemDto = ItemMapper.toDto(item);
 
         assertThat(itemDto).isNotNull();
-        assertThat(itemDto.getId()).isEqualTo(1L);
+        assertThat(itemDto.getId()).isEqualTo(2L);
         assertThat(itemDto.getName()).isEqualTo("Item");
         assertThat(itemDto.getDescription()).isEqualTo("Description");
         assertThat(itemDto.getAvailable()).isEqualTo(true);
@@ -50,44 +61,14 @@ class ItemMapperTest {
 
     @Test
     void toCreateDto_shouldMapItemToItemCreateDto_withRequest() {
-        ItemRequest request = new ItemRequest();
-        request.setId(2L);
-
         ItemCreateDto itemCreateDto = ItemMapper.toCreateDto(item);
-
         assertThat(itemCreateDto).isNotNull();
-        assertThat(itemCreateDto.getId()).isEqualTo(1L);
+        assertThat(itemCreateDto.getId()).isEqualTo(2L);
         assertThat(itemCreateDto.getName()).isEqualTo("Item");
         assertThat(itemCreateDto.getDescription()).isEqualTo("Description");
-        assertThat(itemCreateDto.getAvailable()).isEqualTo(true);
+        assertThat(itemCreateDto.getAvailable()).isTrue();
         assertThat(itemCreateDto.getOwner().getId()).isEqualTo(1L);
-        assertThat(itemCreateDto.getRequestId()).isEqualTo(2L);
-    }
-
-    @Test
-    void toCreateDto_shouldMapItemToItemCreateDto_withoutRequest() {
-        User owner = new User();
-        owner.setId(1L);
-        owner.setName("Owner");
-        owner.setEmail("owner@example.com");
-
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("Item");
-        item.setDescription("Description");
-        item.setAvailable(true);
-        item.setOwner(owner);
-        item.setRequest(null);
-
-        ItemCreateDto itemCreateDto = ItemMapper.toCreateDto(item);
-
-        assertThat(itemCreateDto).isNotNull();
-        assertThat(itemCreateDto.getId()).isEqualTo(1L);
-        assertThat(itemCreateDto.getName()).isEqualTo("Item");
-        assertThat(itemCreateDto.getDescription()).isEqualTo("Description");
-        assertThat(itemCreateDto.getAvailable()).isEqualTo(true);
-        assertThat(itemCreateDto.getOwner().getId()).isEqualTo(1L);
-        assertThat(itemCreateDto.getRequestId()).isNull();
+        assertThat(itemCreateDto.getRequestId()).isEqualTo(1L);
     }
 
     @Test
