@@ -51,7 +51,6 @@ public class CommentDtoTest {
     @Test
     void deserializeShouldDeserializeCommentDto() throws Exception {
         String jsonContent = """
-                //JSON
                 {
                     "id": 1,
                     "text": "Great item!",
@@ -59,6 +58,7 @@ public class CommentDtoTest {
                     "created": "2025-04-23T12:00:00"
                 }
                 """;
+        // Десериализация и проверки
 
         CommentDto commentDto = json.parse(jsonContent).getObject();
 
@@ -71,7 +71,6 @@ public class CommentDtoTest {
     @Test
     void deserializeShouldFailWhenTextIsBlank() throws Exception {
         String jsonContent = """
-                //JSON
                 {
                     "id": 1,
                     "text": "",
@@ -79,6 +78,7 @@ public class CommentDtoTest {
                     "created": "2025-04-23T12:00:00"
                 }
                 """;
+        // Десериализация и проверки
 
         CommentDto commentDto = json.parse(jsonContent).getObject();
         Set<ConstraintViolation<CommentDto>> violations = validator.validate(commentDto);
@@ -91,7 +91,6 @@ public class CommentDtoTest {
     @Test
     void deserialize_shouldFailWhenTextIsNull() throws Exception {
         String jsonContent = """
-                //JSON
                 {
                     "id": 1,
                     "text": null,
@@ -99,6 +98,7 @@ public class CommentDtoTest {
                     "created": "2025-04-23T12:00:00"
                 }
                 """;
+        // Десериализация и проверки
 
         CommentDto commentDto = json.parse(jsonContent).getObject();
         Set<ConstraintViolation<CommentDto>> violations = validator.validate(commentDto);

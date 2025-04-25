@@ -47,13 +47,13 @@ public class UserDtoTest {
     @Test
     void deserializeShouldDeserializeUserDto() throws Exception {
         String jsonContent = """
-                //JSON
                 {
                     "id": 1,
                     "email": "user@email.com",
                     "name": "User Name"
                 }
                 """;
+        // Десериализация и проверки
 
         UserDto userDto = json.parse(jsonContent).getObject();
 
@@ -72,6 +72,7 @@ public class UserDtoTest {
                     "name": "User Name"
                 }
                 """;
+        // Десериализация и проверки
 
         UserDto userDto = json.parse(jsonContent).getObject();
         Set<ConstraintViolation<UserDto>> violations = validator.validate(userDto);
