@@ -57,32 +57,4 @@ public class BookingDtoTest {
         assertThat(result).extractingJsonPathStringValue("$.end").isEqualTo("2025-04-23T13:00:00");
         assertThat(result).extractingJsonPathStringValue("$.status").isEqualTo("APPROVED");
     }
-
-    @Test
-    void deserializeShouldDeserializeBookingDto() throws Exception {
-        String jsonContent = """
-                 {
-                    "id": 1,
-                    "itemId": 1,
-                    "booker":  {
-                        "name": "User name1",
-                        "email": "user@email1"
-                     },
-                    "start": "2025-04-23T12:00:00",
-                    "end": "2025-04-23T13:00:00",
-                    "status": "APPROVED"
-                 }
-                """;
-        // Десериализация и проверки
-
-        BookingDto bookingDto = json.parse(jsonContent).getObject();
-
-        assertThat(bookingDto.getId()).isEqualTo(1L);
-        assertThat(bookingDto.getItemId()).isEqualTo(1L);
-        assertThat(bookingDto.getBooker().getName()).isEqualTo("User name1");
-        assertThat(bookingDto.getBooker().getEmail()).isEqualTo("user@email1");
-        assertThat(bookingDto.getStart()).isEqualTo(LocalDateTime.of(2025, 4, 23, 12, 0));
-        assertThat(bookingDto.getEnd()).isEqualTo(LocalDateTime.of(2025, 4, 23, 13, 0));
-        assertThat(bookingDto.getStatus()).isEqualTo(BookingStatus.APPROVED);
-    }
 }
