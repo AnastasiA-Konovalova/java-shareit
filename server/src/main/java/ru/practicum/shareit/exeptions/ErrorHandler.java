@@ -1,5 +1,6 @@
 package ru.practicum.shareit.exeptions;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -8,8 +9,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
@@ -54,6 +53,13 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleIllegalStateException(final IllegalStateException e) {
         log.error("Выброшено исключение, конфликт: {}", e.getMessage());
+        return new ErrorResponse("Другая ошибка: ", e.getMessage());
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleEntityNotFoundException(final EntityNotFoundException e) {
+        log.error("Выброшено исключение, объект не найден: " + e.getMessage());
         return new ErrorResponse("Другая ошибка: ", e.getMessage());
     }
 }

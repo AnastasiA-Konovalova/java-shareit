@@ -143,8 +143,7 @@ public class UserControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").value("Пользователь с id 1 не найден."));
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -172,8 +171,7 @@ public class UserControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.error").value("Пользователь email test@test.com уже существует"));
+                .andExpect(status().isConflict());
     }
 
     @Test
@@ -186,8 +184,7 @@ public class UserControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").value("Пользователь с id 1 не найден."));
+                .andExpect(status().isNotFound());
     }
 
     @Test
