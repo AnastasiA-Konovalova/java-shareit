@@ -115,7 +115,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>ru.practicum.shareit.ShareItApp</mainClass>
+                    <mainClass>ru.practicum.shareit.gateway.ShareItApp</mainClass>
                 </configuration>
             </plugin>
         </plugins>
