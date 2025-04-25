@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +11,16 @@ import org.springframework.context.annotation.Import;
 import ru.practicum.shareit.booking.enums.BookingStatus;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exeptions.NotFoundException;
+import ru.practicum.shareit.exeptions.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.UserServiceImpl;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.Clock;
@@ -24,11 +29,12 @@ import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @DataJpaTest
-@Import({ItemServiceImpl.class})
+@Import({ItemServiceImpl.class, UserServiceImpl.class})
 public class ItemServiceImplTest {
 
     @Autowired
@@ -36,6 +42,15 @@ public class ItemServiceImplTest {
 
     @Autowired
     private ItemService itemService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ItemRepository itemRepository;
+
+    @Autowired
+    private UserService userService;
 
     @MockBean
     private Clock clock;
@@ -163,6 +178,13 @@ public class ItemServiceImplTest {
     }
 
     @Test
+    void create_shouldNotCreateItemNotUser() {
+        assertThatThrownBy(() -> {
+            itemService.create(itemCreateDto1, 999L);
+        }).isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
     void updateItemTest() {
         ItemDto newItemDto = new ItemDto();
         newItemDto.setName("Updated Item");
@@ -180,6 +202,93 @@ public class ItemServiceImplTest {
         assertEquals("Updated Description", updatedItem.getDescription());
         assertEquals(false, updatedItem.getAvailable());
         assertEquals(user1.getId(), updatedItem.getOwner().getId());
+    }
+
+    @Test
+    void update_shouldNotUpdateNoItem() {
+        User user = new User();
+        user.setName("Test User");
+        user.setEmail("test@example.com");
+        user = userRepository.save(user);
+
+        final Long userId = user.getId();
+        final Long nonExistentItemId = 999L;
+
+        assertThrows(NotFoundException.class, () -> {
+            itemService.update(new ItemDto(), userId, nonExistentItemId);
+        });
+    }
+
+    @Test
+    void update_shouldUpdateOnlyName() {
+        User user = new User();
+        user.setName("Test User");
+        user.setEmail("test@example.com");
+        User savedUser = userRepository.save(user);
+
+        Item item = new Item();
+        item.setName("Old Name");
+        item.setDescription("Original Description");
+        item.setAvailable(true);
+        item.setOwner(savedUser);
+        Item savedItem = itemRepository.save(item);
+
+        ItemDto updateDto = new ItemDto();
+        updateDto.setName("New Name");
+
+        ItemDto updatedItem = itemService.update(updateDto, savedUser.getId(), savedItem.getId());
+
+        Assertions.assertThat(updatedItem.getName()).isEqualTo("New Name");
+        Assertions.assertThat(updatedItem.getDescription()).isEqualTo(savedItem.getDescription());
+        Assertions.assertThat(updatedItem.getAvailable()).isEqualTo(savedItem.getAvailable());
+    }
+
+    @Test
+    void update_shouldUpdateOnlyDescription() {
+        User user = new User();
+        user.setName("Test User");
+        user.setEmail("test@example.com");
+        User savedUser = userRepository.save(user);
+
+        Item item = new Item();
+        item.setName("Item Name");
+        item.setDescription("Original Description");
+        item.setAvailable(true);
+        item.setOwner(savedUser);
+        Item savedItem = itemRepository.save(item);
+
+        ItemDto updateDto = new ItemDto();
+        updateDto.setDescription("new description");
+
+        ItemDto updatedItem = itemService.update(updateDto, savedUser.getId(), savedItem.getId());
+
+        Assertions.assertThat(updatedItem.getDescription()).isEqualTo("new description");
+        Assertions.assertThat(updatedItem.getName()).isEqualTo(savedItem.getName());
+        Assertions.assertThat(updatedItem.getAvailable()).isEqualTo(savedItem.getAvailable());
+    }
+
+    @Test
+    void update_shouldUpdateOnlyAvailable() {
+        User user = new User();
+        user.setName("Test User");
+        user.setEmail("test@example.com");
+        User savedUser = userRepository.save(user);
+
+        Item item = new Item();
+        item.setName("Item Name");
+        item.setDescription("Original Description");
+        item.setAvailable(true);
+        item.setOwner(savedUser);
+        Item savedItem = itemRepository.save(item);
+
+        ItemDto updateDto = new ItemDto();
+        updateDto.setAvailable(false);
+
+        ItemDto updatedItem = itemService.update(updateDto, savedUser.getId(), savedItem.getId());
+
+        Assertions.assertThat(updatedItem.getAvailable()).isEqualTo(false);
+        Assertions.assertThat(updatedItem.getDescription()).isEqualTo(savedItem.getDescription());
+        Assertions.assertThat(updatedItem.getName()).isEqualTo(savedItem.getName());
     }
 
     @Test
@@ -206,6 +315,34 @@ public class ItemServiceImplTest {
         assertEquals(item1.getDescription(), itemDto.getDescription());
         assertTrue(itemDto.getAvailable());
         assertEquals(item1.getOwner(), itemDto.getOwner());
+    }
+
+    @Test
+    void findById_shouldNotFindItemById() {
+        assertThrows(NotFoundException.class, () -> {
+            itemService.getByOwnerId(999L);
+        });
+    }
+
+    @Test
+    void findByOwnerId_shouldFindItemByOwnerId() {
+        User user = new User();
+        user.setName("Test User");
+        user.setEmail("test@example.com");
+        User savedUser = userRepository.save(user);
+
+        ItemCreateDto itemDto = new ItemCreateDto();
+        itemDto.setName("Test Item");
+        itemDto.setDescription("Description");
+        itemDto.setAvailable(true);
+        itemDto.setOwner(savedUser);
+
+        ItemCreateDto savedItem = itemService.create(itemDto, savedUser.getId());
+
+        List<ItemDto> items = itemService.getByOwnerId(savedUser.getId());
+
+        Assertions.assertThat(items).hasSize(1);
+        Assertions.assertThat(items.get(0).getId()).isEqualTo(savedItem.getId());
     }
 
     @Test
@@ -250,6 +387,32 @@ public class ItemServiceImplTest {
         assertEquals("Great item", savedEntity.getText());
         assertEquals(user2.getId(), savedEntity.getAuthor().getId());
         assertEquals(item1.getId(), savedEntity.getItem().getId());
+    }
 
+    @Test
+    void addComment_shouldNotAddCommentNoBooking() {
+        User owner = new User();
+        owner.setName("Owner");
+        owner.setEmail("owner@example.com");
+        User savedOwner = userRepository.save(owner);
+
+        Item item = new Item();
+        item.setName("Test Item");
+        item.setDescription("Item Description");
+        item.setAvailable(true);
+        item.setOwner(savedOwner);
+        Item savedItem = itemRepository.save(item);
+
+        User commenter = new User();
+        commenter.setName("Commenter");
+        commenter.setEmail("commenter@example.com");
+        User savedCommenter = userRepository.save(commenter);
+
+        CommentDto commentDtoRequest = new CommentDto();
+        commentDtoRequest.setText("Nice item!");
+
+        assertThrows(ValidationException.class, () -> {
+            itemService.saveComment(commentDtoRequest, savedItem.getId(), savedCommenter.getId());
+        });
     }
 }

@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.apache.catalina.User;
 
 @Data
 public class ItemCreateDto {
@@ -19,7 +18,7 @@ public class ItemCreateDto {
     @NotNull(message = "статус должен быть указан")
     private Boolean available;
 
-    private User ownerId;
+    private Long ownerId;
 
     private Long requestId;
 }
