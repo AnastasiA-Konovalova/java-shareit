@@ -23,7 +23,7 @@ public class BookingDto {
 
     private User booker;
 
-    private Item item;
+    //private Item item;
 
     private BookingStatus status = BookingStatus.WAITING;
 }
