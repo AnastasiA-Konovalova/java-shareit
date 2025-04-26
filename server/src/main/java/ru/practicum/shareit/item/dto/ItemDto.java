@@ -20,11 +20,9 @@ public class ItemDto {
 
     private User owner;
 
-    private List<CommentDto> comments;
-
     private BookingDto lastBooking;
 
     private BookingDto nextBooking;
 
-    private List<CommentDto> commentsDto = new ArrayList<>();
+    private List<CommentDto> comments = new ArrayList<>();
 }
