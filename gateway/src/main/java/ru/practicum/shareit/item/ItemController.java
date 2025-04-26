@@ -22,7 +22,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 @RequiredArgsConstructor
 public class ItemController {
 
-    private static final String X_SHARER_USER_ID_HEADER = "x-sharer-user-id";
+    private static final String X_SHARER_USER_ID_HEADER = "X-Sharer-User-Id";
     private final ItemClient itemClient;
 
     @GetMapping
