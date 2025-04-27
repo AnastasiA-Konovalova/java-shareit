@@ -150,7 +150,7 @@ public class UserControllerTest {
     void saveShouldReturnBadRequestIfInvalidEmail() throws Exception {
         UserDto invalidUserDto = new UserDto();
         invalidUserDto.setName("test");
-        invalidUserDto.setEmail("invalid-email"); // Некорректный email
+        invalidUserDto.setEmail("invalid-email");
 
         mvc.perform(post("/users")
                         .content(mapper.writeValueAsString(invalidUserDto))

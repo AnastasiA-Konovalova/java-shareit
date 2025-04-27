@@ -193,7 +193,7 @@ public class UserServiceImplTest {
         UserDto updatedUserDto = userService.update(newUserDto, user1.getId());
 
         assertEquals(user1.getId(), updatedUserDto.getId());
-        assertEquals("User1", updatedUserDto.getName()); // Имя не изменилось
+        assertEquals("User1", updatedUserDto.getName());
         assertEquals("updated@email.com", updatedUserDto.getEmail());
 
         User updatedUser = entityManager.find(User.class, user1.getId());
