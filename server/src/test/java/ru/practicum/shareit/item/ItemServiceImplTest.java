@@ -19,7 +19,6 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.UserServiceImpl;
 import ru.practicum.shareit.user.model.User;
 
@@ -49,15 +48,13 @@ public class ItemServiceImplTest {
     @Autowired
     private ItemRepository itemRepository;
 
-    @Autowired
-    private UserService userService;
-
     @MockBean
     private Clock clock;
 
     static User user1;
     static User user2;
     static Item item1;
+    static ItemDto newItemDto;
     static ItemDto itemDto1;
     static ItemRequest request1;
     static ItemRequest request2;
@@ -100,6 +97,11 @@ public class ItemServiceImplTest {
         itemDto1.setDescription("description");
         itemDto1.setAvailable(true);
         itemDto1.setComments(Collections.emptyList());
+
+        newItemDto = new ItemDto();
+        newItemDto.setName("Updated Item");
+        newItemDto.setDescription("Updated Description");
+        newItemDto.setAvailable(false);
 
         request1 = new ItemRequest();
         request1.setDescription("Test Request1");
@@ -162,7 +164,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void createItemTest() {
+    void createItemSuccessTest() {
         entityManager.persist(user1);
         entityManager.persist(request1);
 
@@ -178,19 +180,14 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void create_shouldNotCreateItemNotUser() {
+    void createShouldNotCreateItemNotUser() {
         assertThatThrownBy(() -> {
             itemService.create(itemCreateDto1, 999L);
         }).isInstanceOf(NotFoundException.class);
     }
 
     @Test
-    void updateItemTest() {
-        ItemDto newItemDto = new ItemDto();
-        newItemDto.setName("Updated Item");
-        newItemDto.setDescription("Updated Description");
-        newItemDto.setAvailable(false);
-
+    void updateItemSuccessTest() {
         ItemDto result = itemService.update(newItemDto, user1.getId(), item1.getId());
 
         assertNotNull(result.getId());
@@ -205,11 +202,8 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void update_shouldNotUpdateNoItem() {
-        User user = new User();
-        user.setName("Test User");
-        user.setEmail("test@example.com");
-        user = userRepository.save(user);
+    void updateShouldNotUpdateNoItem() {
+        User user = userRepository.save(user1);
 
         final Long userId = user.getId();
         final Long nonExistentItemId = 999L;
@@ -220,18 +214,10 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void update_shouldUpdateOnlyName() {
-        User user = new User();
-        user.setName("Test User");
-        user.setEmail("test@example.com");
-        User savedUser = userRepository.save(user);
+    void updateShouldUpdateOnlyName() {
+        User savedUser = userRepository.save(user1);
 
-        Item item = new Item();
-        item.setName("Old Name");
-        item.setDescription("Original Description");
-        item.setAvailable(true);
-        item.setOwner(savedUser);
-        Item savedItem = itemRepository.save(item);
+        Item savedItem = itemRepository.save(item1);
 
         ItemDto updateDto = new ItemDto();
         updateDto.setName("New Name");
@@ -244,18 +230,10 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void update_shouldUpdateOnlyDescription() {
-        User user = new User();
-        user.setName("Test User");
-        user.setEmail("test@example.com");
-        User savedUser = userRepository.save(user);
+    void updateShouldUpdateOnlyDescription() {
+        User savedUser = userRepository.save(user1);
 
-        Item item = new Item();
-        item.setName("Item Name");
-        item.setDescription("Original Description");
-        item.setAvailable(true);
-        item.setOwner(savedUser);
-        Item savedItem = itemRepository.save(item);
+        Item savedItem = itemRepository.save(item1);
 
         ItemDto updateDto = new ItemDto();
         updateDto.setDescription("new description");
@@ -268,18 +246,10 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void update_shouldUpdateOnlyAvailable() {
-        User user = new User();
-        user.setName("Test User");
-        user.setEmail("test@example.com");
-        User savedUser = userRepository.save(user);
+    void updateShouldUpdateOnlyAvailable() {
+        User savedUser = userRepository.save(user1);
 
-        Item item = new Item();
-        item.setName("Item Name");
-        item.setDescription("Original Description");
-        item.setAvailable(true);
-        item.setOwner(savedUser);
-        Item savedItem = itemRepository.save(item);
+        Item savedItem = itemRepository.save(item1);
 
         ItemDto updateDto = new ItemDto();
         updateDto.setAvailable(false);
@@ -292,7 +262,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void getByOwnerIdTest() {
+    void getByOwnerIdSuccessTest() {
         List<ItemDto> items = itemService.getByOwnerId(user1.getId());
 
         assertEquals(1, items.size());
@@ -308,7 +278,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void getItemByIdTest() {
+    void getItemByIdSuccessTest() {
         ItemDto itemDto = itemService.getItemById(item1.getId(), user1.getId());
 
         assertEquals(item1.getName(), itemDto.getName());
@@ -318,14 +288,14 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void findById_shouldNotFindItemById() {
+    void findByIdShouldNotFindItemById() {
         assertThrows(NotFoundException.class, () -> {
             itemService.getByOwnerId(999L);
         });
     }
 
     @Test
-    void findByOwnerId_shouldFindItemByOwnerId() {
+    void findByOwnerIdShouldFindItemByOwnerId() {
         User user = new User();
         user.setName("Test User");
         user.setEmail("test@example.com");
@@ -362,7 +332,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void deleteTest() {
+    void deleteSuccessTest() {
         ItemDto itemBeforeDelete = itemService.getItemById(item1.getId(), user1.getId());
         assertEquals("Item name1", itemBeforeDelete.getName());
 
@@ -390,18 +360,11 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void addComment_shouldNotAddCommentNoBooking() {
-        User owner = new User();
-        owner.setName("Owner");
-        owner.setEmail("owner@example.com");
-        User savedOwner = userRepository.save(owner);
+    void addCommentShouldNotAddCommentNoBooking() {
+        User savedOwner = userRepository.save(user1);
 
-        Item item = new Item();
-        item.setName("Test Item");
-        item.setDescription("Item Description");
-        item.setAvailable(true);
-        item.setOwner(savedOwner);
-        Item savedItem = itemRepository.save(item);
+        item1.setOwner(savedOwner);
+        Item savedItem = itemRepository.save(item1);
 
         User commenter = new User();
         commenter.setName("Commenter");

@@ -110,7 +110,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findByBookerIdOrderByStartBookingDesc_shouldReturnAllBookings() {
+    void findByBookerIdOrderByStartBookingDesc() {
         List<Booking> bookings = bookingRepository.findByBookerIdOrderByStartBookingDesc(booker.getId());
 
         assertThat(bookings).hasSize(5);
@@ -118,14 +118,14 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findByBookerIdOrderByStartBookingDesc_shouldReturnEmptyListWhenNoBookings() {
+    void findByBookerIdOrderByStartBookingDescReturnEmptyListIfNoBookings() {
         List<Booking> bookings = bookingRepository.findByBookerIdOrderByStartBookingDesc(owner.getId());
 
         assertThat(bookings).isEmpty();
     }
 
     @Test
-    void findByBookerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc_shouldReturnCurrentBookings() {
+    void findByBookerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDescShouldReturnCurrentBookings() {
         List<Booking> bookings = bookingRepository.findByBookerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc(
                 booker.getId(), now, now);
 
@@ -134,7 +134,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findByBookerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc_shouldReturnEmptyListWhenNoCurrentBookings() {
+    void findByBookerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDescShouldReturnEmptyListIfNoCurrentBookings() {
         List<Booking> bookings = bookingRepository.findByBookerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc(
                 owner.getId(), now, now);
 
@@ -142,7 +142,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findByBookerIdAndEndBookingBeforeOrderByStartBookingDesc_shouldReturnPastBookings() {
+    void findByBookerIdAndEndBookingBeforeOrderByStartBookingDescShouldReturnPastBookings() {
         List<Booking> bookings = bookingRepository.findByBookerIdAndEndBookingBeforeOrderByStartBookingDesc(booker.getId(), now);
 
         assertThat(bookings).hasSize(1);
@@ -150,21 +150,21 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findByBookerIdAndEndBookingBeforeOrderByStartBookingDesc_shouldReturnEmptyListWhenNoPastBookings() {
+    void findByBookerIdAndEndBookingBeforeOrderByStartBookingDescShouldReturnEmptyListIfNoPastBookings() {
         List<Booking> bookings = bookingRepository.findByBookerIdAndEndBookingBeforeOrderByStartBookingDesc(owner.getId(), now);
 
         assertThat(bookings).isEmpty();
     }
 
     @Test
-    void findByBookerIdAndStartBookingAfterOrderByStartBookingDesc_shouldReturnEmptyListWhenNoFutureBookings() {
+    void findByBookerIdAndStartBookingAfterOrderByStartBookingDescShouldReturnEmptyListIfNoFutureBookings() {
         List<Booking> bookings = bookingRepository.findByBookerIdAndStartBookingAfterOrderByStartBookingDesc(owner.getId(), now);
 
         assertThat(bookings).isEmpty();
     }
 
     @Test
-    void findByBookerIdAndBookingStatusOrderByStartBookingDesc_shouldReturnBookingsByStatus() {
+    void findByBookerIdAndBookingStatusOrderByStartBookingDescShouldReturnBookingsByStatus() {
         List<Booking> bookings = bookingRepository.findByBookerIdAndBookingStatusOrderByStartBookingDesc(booker.getId(), BookingStatus.WAITING);
 
         assertThat(bookings).hasSize(1);
@@ -172,14 +172,14 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findByBookerIdAndBookingStatusOrderByStartBookingDesc_shouldReturnEmptyListWhenNoBookingsWithStatus() {
+    void findByBookerIdAndBookingStatusOrderByStartBookingDescShouldReturnEmptyListIfNoBookingsWithStatus() {
         List<Booking> bookings = bookingRepository.findByBookerIdAndBookingStatusOrderByStartBookingDesc(owner.getId(), BookingStatus.WAITING);
 
         assertThat(bookings).isEmpty();
     }
 
     @Test
-    void findByItemOwnerIdOrderByStartBookingDesc_shouldReturnAllOwnerBookings() {
+    void findByItemOwnerIdOrderByStartBookingDescShouldReturnAllOwnerBookings() {
         List<Booking> bookings = bookingRepository.findByItemOwnerIdOrderByStartBookingDesc(owner.getId());
 
         assertThat(bookings).hasSize(5);
@@ -187,14 +187,14 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findByItemOwnerIdOrderByStartBookingDesc_shouldReturnEmptyListWhenNoOwnerBookings() {
+    void findByItemOwnerIdOrderByStartBookingDescShouldReturnEmptyListIfNoOwnerBookings() {
         List<Booking> bookings = bookingRepository.findByItemOwnerIdOrderByStartBookingDesc(booker.getId());
 
         assertThat(bookings).isEmpty();
     }
 
     @Test
-    void findByItemOwnerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc_shouldReturnCurrentOwnerBookings() {
+    void findByItemOwnerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDescShouldReturnCurrentOwnerBookings() {
         List<Booking> bookings = bookingRepository.findByItemOwnerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc(
                 owner.getId(), now, now);
 
@@ -203,7 +203,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findByItemOwnerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc_shouldReturnEmptyListWhenNoCurrentOwnerBookings() {
+    void findByItemOwnerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDescShouldReturnEmptyListIfNoCurrentOwnerBookings() {
         List<Booking> bookings = bookingRepository.findByItemOwnerIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc(
                 booker.getId(), now, now);
 
@@ -211,7 +211,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findByItemOwnerIdAndEndBookingBeforeOrderByStartBookingDesc_shouldReturnPastOwnerBookings() {
+    void findByItemOwnerIdAndEndBookingBeforeOrderByStartBookingDescShouldReturnPastOwnerBookings() {
         List<Booking> bookings = bookingRepository.findByItemOwnerIdAndEndBookingBeforeOrderByStartBookingDesc(owner.getId(), now);
 
         assertThat(bookings).hasSize(1);
@@ -219,14 +219,14 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findByItemOwnerIdAndEndBookingBeforeOrderByStartBookingDesc_shouldReturnEmptyListWhenNoPastOwnerBookings() {
+    void findByItemOwnerIdAndEndBookingBeforeOrderByStartBookingDescShouldReturnEmptyListIfNoPastOwnerBookings() {
         List<Booking> bookings = bookingRepository.findByItemOwnerIdAndEndBookingBeforeOrderByStartBookingDesc(booker.getId(), now);
 
         assertThat(bookings).isEmpty();
     }
 
     @Test
-    void findByItemOwnerIdAndBookingStatusOrderByStartBookingDesc_shouldReturnOwnerBookingsByStatus() {
+    void findByItemOwnerIdAndBookingStatusOrderByStartBookingDescShouldReturnOwnerBookingsByStatus() {
         List<Booking> bookings = bookingRepository.findByItemOwnerIdAndBookingStatusOrderByStartBookingDesc(owner.getId(), BookingStatus.REJECTED);
 
         assertThat(bookings).hasSize(1);
@@ -234,14 +234,14 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findByItemOwnerIdAndBookingStatusOrderByStartBookingDesc_shouldReturnEmptyListWhenNoOwnerBookingsWithStatus() {
+    void findByItemOwnerIdAndBookingStatusOrderByStartBookingDescShouldReturnEmptyListIfNoOwnerBookingsWithStatus() {
         List<Booking> bookings = bookingRepository.findByItemOwnerIdAndBookingStatusOrderByStartBookingDesc(booker.getId(), BookingStatus.REJECTED);
 
         assertThat(bookings).isEmpty();
     }
 
     @Test
-    void findByBookerIdAndItemIdAndEndBookingBeforeAndBookingStatus_shouldReturnBookings() {
+    void findByBookerIdAndItemIdAndEndBookingBeforeAndBookingStatusShouldReturnBookings() {
         List<Booking> bookings = bookingRepository.findByBookerIdAndItemIdAndEndBookingBeforeAndBookingStatus(
                 booker.getId(), item1.getId(), now, BookingStatus.APPROVED);
 
@@ -250,7 +250,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findByBookerIdAndItemIdAndEndBookingBeforeAndBookingStatus_shouldReturnEmptyListWhenNoBookings() {
+    void findByBookerIdAndItemIdAndEndBookingBeforeAndBookingStatusShouldReturnEmptyListIfNoBookings() {
         List<Booking> bookings = bookingRepository.findByBookerIdAndItemIdAndEndBookingBeforeAndBookingStatus(
                 booker.getId(), item2.getId(), now, BookingStatus.APPROVED);
 
@@ -258,7 +258,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findByItemInAndBookingStatusNot_shouldReturnBookings() {
+    void findByItemInAndBookingStatusNotShouldReturnBookings() {
         List<Item> items = List.of(item1, item2);
         List<Booking> bookings = bookingRepository.findByItemInAndBookingStatusNot(items, BookingStatus.REJECTED);
 
@@ -267,7 +267,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findByItemInAndBookingStatusNot_shouldReturnEmptyListWhenItemsEmpty() {
+    void findByItemInAndBookingStatusNotShouldReturnEmptyListIfItemsEmpty() {
         List<Item> items = List.of();
         List<Booking> bookings = bookingRepository.findByItemInAndBookingStatusNot(items, BookingStatus.REJECTED);
 

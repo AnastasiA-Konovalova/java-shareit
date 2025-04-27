@@ -64,7 +64,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    void getByIdTest() throws Exception {
+    void getByIdSuccessTest() throws Exception {
         when(bookingService.getById(anyLong(), anyLong())).thenReturn(bookingDto);
 
         mvc.perform(get("/bookings/1")
@@ -82,7 +82,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    void getAllByUserTest() throws Exception {
+    void getAllByUserSuccessTest() throws Exception {
         when(bookingService.getAllByUser(anyLong(), any(State.class))).thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings")
@@ -102,7 +102,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    void getAllByOwnerTest() throws Exception {
+    void getAllByOwnerSuccessTest() throws Exception {
         when(bookingService.getAllByOwner(anyLong(), any(State.class))).thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings/owner")
@@ -141,7 +141,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    void changeBookingStatusTest() throws Exception {
+    void changeBookingStatusSuccessTest() throws Exception {
         when(bookingService.changeBookingStatus(anyLong(), anyLong(), anyBoolean())).thenReturn(bookingDto);
 
         mvc.perform(patch("/bookings/1")

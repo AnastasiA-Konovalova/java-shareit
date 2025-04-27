@@ -28,9 +28,11 @@ public class UserServiceImplTest {
     @Autowired
     private UserRepository userRepository;
 
-    private User user1;
-    private User user2;
-    private UserDto userDto1;
+    static User user1;
+    static User user2;
+    static UserDto userDto1;
+    static UserDto newUserDto;
+
 
     @BeforeEach
     void setUp() {
@@ -47,6 +49,8 @@ public class UserServiceImplTest {
         userDto1 = new UserDto();
         userDto1.setName("User1");
         userDto1.setEmail("user1@email.com");
+
+        newUserDto = new UserDto();
 
         entityManager.flush();
     }
@@ -89,7 +93,6 @@ public class UserServiceImplTest {
 
     @Test
     void saveTest() {
-        UserDto newUserDto = new UserDto();
         newUserDto.setName("New User");
         newUserDto.setEmail("newuser@email.com");
 
@@ -106,7 +109,6 @@ public class UserServiceImplTest {
 
     @Test
     void saveTestWithDuplicateEmail() {
-        UserDto newUserDto = new UserDto();
         newUserDto.setName("Duplicate User");
         newUserDto.setEmail("user1@email.com");
 
@@ -117,11 +119,10 @@ public class UserServiceImplTest {
 
     @Test
     void updateTest() {
-        UserDto updateDto = new UserDto();
-        updateDto.setName("Updated User");
-        updateDto.setEmail("updated@email.com");
+        newUserDto.setName("Updated User");
+        newUserDto.setEmail("updated@email.com");
 
-        UserDto updatedUserDto = userService.update(updateDto, user1.getId());
+        UserDto updatedUserDto = userService.update(newUserDto, user1.getId());
 
         assertEquals(user1.getId(), updatedUserDto.getId());
         assertEquals("Updated User", updatedUserDto.getName());
@@ -134,11 +135,10 @@ public class UserServiceImplTest {
 
     @Test
     void updateTestWithNullEmail() {
-        UserDto updateDto = new UserDto();
-        updateDto.setName("Updated Name");
-        updateDto.setEmail(null);
+        newUserDto.setName("Updated Name");
+        newUserDto.setEmail(null);
 
-        UserDto updatedUserDto = userService.update(updateDto, user1.getId());
+        UserDto updatedUserDto = userService.update(newUserDto, user1.getId());
 
         assertEquals(user1.getId(), updatedUserDto.getId());
         assertEquals("Updated Name", updatedUserDto.getName());
@@ -151,23 +151,21 @@ public class UserServiceImplTest {
 
     @Test
     void updateTestWithDuplicateEmail() {
-        UserDto updateDto = new UserDto();
-        updateDto.setName("Updated User");
-        updateDto.setEmail("user2@email.com");
+        newUserDto.setName("Updated User");
+        newUserDto.setEmail("user2@email.com");
 
         IllegalStateException exception = assertThrows(IllegalStateException.class, () ->
-                userService.update(updateDto, user1.getId()));
-        assertEquals("Пользователь email" + updateDto.getEmail() + "уже существует", exception.getMessage());
+                userService.update(newUserDto, user1.getId()));
+        assertEquals("Пользователь email" + newUserDto.getEmail() + "уже существует", exception.getMessage());
     }
 
     @Test
     void updateTestWithInvalidId() {
-        UserDto updateDto = new UserDto();
-        updateDto.setName("Updated User");
-        updateDto.setEmail("updated@email.com");
+        newUserDto.setName("Updated User");
+        newUserDto.setEmail("updated@email.com");
 
         assertThrows(EntityNotFoundException.class, () ->
-                userService.update(updateDto, 999L));
+                userService.update(newUserDto, 999L));
     }
 
     @Test
@@ -189,11 +187,10 @@ public class UserServiceImplTest {
 
     @Test
     void updateTestWithNullName() {
-        UserDto updateDto = new UserDto();
-        updateDto.setName(null);
-        updateDto.setEmail("updated@email.com");
+        newUserDto.setName(null);
+        newUserDto.setEmail("updated@email.com");
 
-        UserDto updatedUserDto = userService.update(updateDto, user1.getId());
+        UserDto updatedUserDto = userService.update(newUserDto, user1.getId());
 
         assertEquals(user1.getId(), updatedUserDto.getId());
         assertEquals("User1", updatedUserDto.getName()); // Имя не изменилось

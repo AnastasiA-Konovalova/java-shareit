@@ -34,9 +34,8 @@ public class BookingServiceImplTest {
 
     private User owner1;
     private User booker1;
-    private User otherUser;
     private Item item1;
-    private Item unavailableItem;
+    private Item item2;
     private Booking pastBooking;
     private Booking currentBooking;
     private Booking futureBooking;
@@ -58,11 +57,6 @@ public class BookingServiceImplTest {
         booker1.setEmail("booker@email");
         entityManager.persist(booker1);
 
-        otherUser = new User();
-        otherUser.setName("Other");
-        otherUser.setEmail("other@email");
-        entityManager.persist(otherUser);
-
         item1 = new Item();
         item1.setName("Item");
         item1.setDescription("Item description");
@@ -70,12 +64,12 @@ public class BookingServiceImplTest {
         item1.setOwner(owner1);
         entityManager.persist(item1);
 
-        unavailableItem = new Item();
-        unavailableItem.setName("Unavailable Item");
-        unavailableItem.setDescription("Unavailable item description");
-        unavailableItem.setAvailable(false);
-        unavailableItem.setOwner(owner1);
-        entityManager.persist(unavailableItem);
+        item2 = new Item();
+        item2.setName("Unavailable Item");
+        item2.setDescription("Unavailable item description");
+        item2.setAvailable(false);
+        item2.setOwner(owner1);
+        entityManager.persist(item2);
 
         pastBooking = new Booking();
         pastBooking.setItem(item1);
@@ -121,7 +115,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    void getByIdTest() {
+    void getByIdSuccessTest() {
         BookingDto bookingDto = bookingService.getById(pastBooking.getId(), booker1.getId());
 
         assertNotNull(bookingDto.getId());
@@ -132,14 +126,14 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    void getByIdTest_withInvalidBookingId_shouldThrowNotFoundException() {
+    void getByIdTestWithInvalidBookingId() {
         NotFoundException exception = assertThrows(NotFoundException.class, () ->
                 bookingService.getById(999L, booker1.getId()));
         assertEquals("Бронирование не найдено", exception.getMessage());
     }
 
     @Test
-    void getAllByUserTest() {
+    void getAllByUserSuccessTest() {
         List<BookingDto> bookings = bookingService.getAllByUser(booker1.getId(), State.ALL);
 
         assertEquals(5, bookings.size());
@@ -158,7 +152,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    void getAllByOwnerTest() {
+    void getAllByOwnerSuccessTest() {
         List<BookingDto> bookings = bookingService.getAllByOwner(owner1.getId(), State.ALL);
 
         assertEquals(5, bookings.size());
@@ -170,7 +164,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    void createTest() {
+    void createSuccessTest() {
         BookingDto bookingDto = new BookingDto();
         bookingDto.setItemId(item1.getId());
         bookingDto.setStart(now.plusDays(1));
@@ -203,7 +197,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    void changeBookingStatusTest() {
+    void changeBookingStatusSuccessTest() {
         BookingDto updatedBooking = bookingService.changeBookingStatus(waitingBooking.getId(), owner1.getId(), true);
 
         assertEquals(BookingStatus.APPROVED, updatedBooking.getStatus());
@@ -216,7 +210,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    void getAllByUserTest_withWaitingState() {
+    void getAllByUserTestWithWaitingState() {
         List<BookingDto> bookings = bookingService.getAllByUser(booker1.getId(), State.WAITING);
 
         assertEquals(1, bookings.size());
@@ -224,7 +218,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    void getAllByUserTest_withRejectedState() {
+    void getAllByUserTestWithRejectedState() {
         List<BookingDto> bookings = bookingService.getAllByUser(booker1.getId(), State.REJECTED);
 
         assertEquals(1, bookings.size());
@@ -232,7 +226,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    void getAllByOwnerTest_withWaitingState() {
+    void getAllByOwnerTestWithWaitingState() {
         List<BookingDto> bookings = bookingService.getAllByOwner(owner1.getId(), State.WAITING);
 
         assertEquals(1, bookings.size());
@@ -240,7 +234,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    void getAllByOwnerTest_withRejectedState() {
+    void getAllByOwnerTestWithRejectedState() {
         List<BookingDto> bookings = bookingService.getAllByOwner(owner1.getId(), State.REJECTED);
 
         assertEquals(1, bookings.size());
@@ -257,7 +251,7 @@ public class BookingServiceImplTest {
     @Test
     void createTestWithUnavailableItem() {
         BookingDto bookingDto = new BookingDto();
-        bookingDto.setItemId(unavailableItem.getId());
+        bookingDto.setItemId(item2.getId());
         bookingDto.setStart(now.plusDays(1));
         bookingDto.setEnd(now.plusDays(2));
 

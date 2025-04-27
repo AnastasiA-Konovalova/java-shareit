@@ -54,7 +54,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void getAll_shouldReturnUsers() throws Exception {
+    void getAllShouldReturnUsers() throws Exception {
         when(userService.getAll()).thenReturn(List.of(userDto));
 
         mvc.perform(get("/users")
@@ -69,7 +69,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void getById_shouldReturnUser() throws Exception {
+    void getByIdShouldReturnUser() throws Exception {
         when(userService.getById(anyLong())).thenReturn(userDto);
 
         mvc.perform(get("/users/1")
@@ -83,7 +83,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void save_shouldCreateUser() throws Exception {
+    void saveShouldCreateUser() throws Exception {
         when(userService.save(any(UserDto.class))).thenReturn(userDto);
 
         mvc.perform(post("/users")
@@ -98,7 +98,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void update_shouldUpdateUser() throws Exception {
+    void updateShouldUpdateUser() throws Exception {
         when(userService.update(any(UserDto.class), anyLong())).thenReturn(userDto);
 
         mvc.perform(patch("/users/1")
@@ -113,7 +113,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void delete_shouldDeleteUser() throws Exception {
+    void deleteShouldDeleteUser() throws Exception {
         doNothing().when(userService).delete(anyLong());
 
         mvc.perform(delete("/users/1")
@@ -124,7 +124,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void getAll_shouldReturnEmptyListWhenNoUsers() throws Exception {
+    void getAllShouldReturnEmptyListIfNoUsers() throws Exception {
         when(userService.getAll()).thenReturn(List.of());
 
         mvc.perform(get("/users")
@@ -136,7 +136,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void getById_shouldReturnNotFoundWhenUserDoesNotExist() throws Exception {
+    void getByIdShouldReturnNotFoundIfUserDoesNotExist() throws Exception {
         when(userService.getById(anyLong())).thenThrow(new NotFoundException("Пользователь с id 1 не найден."));
 
         mvc.perform(get("/users/1")
@@ -147,7 +147,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void save_shouldReturnBadRequestWhenInvalidEmail() throws Exception {
+    void saveShouldReturnBadRequestIfInvalidEmail() throws Exception {
         UserDto invalidUserDto = new UserDto();
         invalidUserDto.setName("test");
         invalidUserDto.setEmail("invalid-email"); // Некорректный email
@@ -162,7 +162,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void save_shouldReturnConflictWhenEmailIsDuplicate() throws Exception {
+    void saveShouldReturnConflictIfEmailIsDuplicate() throws Exception {
         when(userService.save(any(UserDto.class)))
                 .thenThrow(new IllegalStateException("Пользователь email test@test.com уже существует"));
 
@@ -175,7 +175,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void update_shouldReturnNotFoundWhenUserDoesNotExist() throws Exception {
+    void updateShouldReturnNotFoundIfUserDoesNotExist() throws Exception {
         when(userService.update(any(UserDto.class), anyLong()))
                 .thenThrow(new EntityNotFoundException("Пользователь с id 1 не найден."));
 
@@ -188,7 +188,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void update_shouldReturnConflictWhenEmailIsDuplicate() throws Exception {
+    void updateShouldReturnConflictIfEmailIsDuplicate() throws Exception {
         when(userService.update(any(UserDto.class), anyLong()))
                 .thenThrow(new IllegalStateException("Пользователь email test@test.com уже существует"));
 
@@ -201,7 +201,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void update_shouldReturnBadRequestWhenInvalidEmail() throws Exception {
+    void updateShouldReturnBadRequestIfInvalidEmail() throws Exception {
         UserDto invalidUserDto = new UserDto();
         invalidUserDto.setName("test");
         invalidUserDto.setEmail("invalid-email");
@@ -216,7 +216,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void save_shouldReturnBadRequestWhenInvalidJson() throws Exception {
+    void saveShouldReturnBadRequestIfInvalidJson() throws Exception {
         String invalidJson = "{ \"name\": \"test\", \"email\": \"test@test.com\"";
 
         mvc.perform(post("/users")
@@ -229,7 +229,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void delete_shouldReturnNotFoundWhenUserDoesNotExist() throws Exception {
+    void deleteShouldReturnNotFoundIfUserDoesNotExist() throws Exception {
         doThrow(new NotFoundException("Пользователь с id 1 не найден.")).when(userService).delete(anyLong());
 
         mvc.perform(delete("/users/1")

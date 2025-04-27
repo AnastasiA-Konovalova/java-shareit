@@ -76,7 +76,6 @@ class UserMapperTest {
 
     @Test
     void toEntityShouldMapUserDtoToUserWithAllFields() {
-        User user = new User();
         User result = UserMapper.toEntity(user, userDto1);
 
         assertThat(result).isNotNull();
@@ -86,11 +85,10 @@ class UserMapperTest {
     }
 
     @Test
-    void toEntity_shouldMapUserDtoToUser_withNullNameAndEmail() {
+    void toEntityShouldMapUserDtoToUser_withNullNameAndEmail() {
         userDto1.setName(null);
         userDto1.setEmail(null);
 
-        User user = new User();
         user.setName("Old Name");
         user.setEmail("old@example.com");
 
@@ -107,7 +105,6 @@ class UserMapperTest {
         userDto1.setName(null);
         userDto1.setEmail("test@example.com");
 
-        User user = new User();
         user.setName("Old Name");
         user.setEmail("old@example.com");
 
