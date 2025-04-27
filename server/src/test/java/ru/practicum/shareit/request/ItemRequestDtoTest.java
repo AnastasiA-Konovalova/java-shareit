@@ -14,6 +14,7 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -67,6 +68,6 @@ class ItemRequestDtoTest {
         assertThat(result).extractingJsonPathBooleanValue("$.items[0].available").isEqualTo(true);
         assertThat(result).extractingJsonPathValue("$.items[0].lastBooking").isNull();
         assertThat(result).extractingJsonPathValue("$.items[0].nextBooking").isNull();
-        assertThat(result).extractingJsonPathValue("$.items[0].comments").isNull();
+        assertThat(result).extractingJsonPathValue("$.items[0].comments").isEqualTo(new ArrayList<>());
     }
 }

@@ -55,7 +55,7 @@ public class BaseClient {
         return patch(path, null, null, body);
     }
 
-    protected <T> ResponseEntity<Object> patch(String path, long userId) {
+    protected <T> ResponseEntity<Object> patch(String path, Long userId) {
         return patch(path, userId, null, null);
     }
 

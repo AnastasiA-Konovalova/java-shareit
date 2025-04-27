@@ -28,10 +28,10 @@ public class ItemRequestClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getUserRequest(Long userId) {
-        return get("/", userId);
+        return get("", userId);
     }
 
-    public ResponseEntity<Object> getRequestById(Long userId, Long requestId) {
+    public ResponseEntity<Object> getRequestById(Long requestId, Long userId) {
         return get("/" + requestId, userId);
     }
 
