@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +27,13 @@ import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @DataJpaTest
 @Import({ItemServiceImpl.class, UserServiceImpl.class})
-public class ItemServiceImplTest {
+class ItemServiceImplTest {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -170,13 +169,13 @@ public class ItemServiceImplTest {
 
         ItemCreateDto result = itemService.create(itemCreateDto1, user1.getId());
 
-        assertNotNull(result.getId());
-        assertEquals("Test Item1", result.getName());
-        assertEquals(request1.getId(), result.getRequestId());
+        assertThat(result.getId()).isNotNull();
+        assertThat("Test Item1").isEqualTo(result.getName());
+        assertThat(request1.getId()).isEqualTo(result.getRequestId());
 
         Item saved = entityManager.find(Item.class, result.getId());
-        assertEquals(user1.getId(), saved.getOwner().getId());
-        assertEquals(request1.getId(), saved.getRequest().getId());
+        assertThat(user1.getId()).isEqualTo(saved.getOwner().getId());
+        assertThat(request1.getId()).isEqualTo(saved.getRequest().getId());
     }
 
     @Test
@@ -190,15 +189,15 @@ public class ItemServiceImplTest {
     void updateItemSuccessTest() {
         ItemDto result = itemService.update(newItemDto, user1.getId(), item1.getId());
 
-        assertNotNull(result.getId());
-        assertEquals("Updated Item", result.getName());
-        assertEquals(false, result.getAvailable());
+        assertThat(result.getId()).isNotNull();
+        assertThat("Updated Item").isEqualTo(result.getName());
+        assertThat(false).isEqualTo(result.getAvailable());
 
         Item updatedItem = entityManager.find(Item.class, item1.getId());
-        assertEquals("Updated Item", updatedItem.getName());
-        assertEquals("Updated Description", updatedItem.getDescription());
-        assertEquals(false, updatedItem.getAvailable());
-        assertEquals(user1.getId(), updatedItem.getOwner().getId());
+        assertThat("Updated Item").isEqualTo(updatedItem.getName());
+        assertThat("Updated Description").isEqualTo(updatedItem.getDescription());
+        assertThat(false).isEqualTo(updatedItem.getAvailable());
+        assertThat(user1.getId()).isEqualTo(updatedItem.getOwner().getId());
     }
 
     @Test
@@ -208,15 +207,14 @@ public class ItemServiceImplTest {
         final Long userId = user.getId();
         final Long nonExistentItemId = 999L;
 
-        assertThrows(NotFoundException.class, () -> {
+        assertThatThrownBy(() -> {
             itemService.update(new ItemDto(), userId, nonExistentItemId);
-        });
+        }).isInstanceOf(NotFoundException.class);
     }
 
     @Test
     void updateShouldUpdateOnlyName() {
         User savedUser = userRepository.save(user1);
-
         Item savedItem = itemRepository.save(item1);
 
         ItemDto updateDto = new ItemDto();
@@ -224,9 +222,9 @@ public class ItemServiceImplTest {
 
         ItemDto updatedItem = itemService.update(updateDto, savedUser.getId(), savedItem.getId());
 
-        Assertions.assertThat(updatedItem.getName()).isEqualTo("New Name");
-        Assertions.assertThat(updatedItem.getDescription()).isEqualTo(savedItem.getDescription());
-        Assertions.assertThat(updatedItem.getAvailable()).isEqualTo(savedItem.getAvailable());
+        assertThat(updatedItem.getName()).isEqualTo("New Name");
+        assertThat(updatedItem.getDescription()).isEqualTo(savedItem.getDescription());
+        assertThat(updatedItem.getAvailable()).isEqualTo(savedItem.getAvailable());
     }
 
     @Test
@@ -240,9 +238,9 @@ public class ItemServiceImplTest {
 
         ItemDto updatedItem = itemService.update(updateDto, savedUser.getId(), savedItem.getId());
 
-        Assertions.assertThat(updatedItem.getDescription()).isEqualTo("new description");
-        Assertions.assertThat(updatedItem.getName()).isEqualTo(savedItem.getName());
-        Assertions.assertThat(updatedItem.getAvailable()).isEqualTo(savedItem.getAvailable());
+        assertThat(updatedItem.getDescription()).isEqualTo("new description");
+        assertThat(updatedItem.getName()).isEqualTo(savedItem.getName());
+        assertThat(updatedItem.getAvailable()).isEqualTo(savedItem.getAvailable());
     }
 
     @Test
@@ -256,42 +254,42 @@ public class ItemServiceImplTest {
 
         ItemDto updatedItem = itemService.update(updateDto, savedUser.getId(), savedItem.getId());
 
-        Assertions.assertThat(updatedItem.getAvailable()).isEqualTo(false);
-        Assertions.assertThat(updatedItem.getDescription()).isEqualTo(savedItem.getDescription());
-        Assertions.assertThat(updatedItem.getName()).isEqualTo(savedItem.getName());
+        assertThat(updatedItem.getAvailable()).isFalse();
+        assertThat(updatedItem.getDescription()).isEqualTo(savedItem.getDescription());
+        assertThat(updatedItem.getName()).isEqualTo(savedItem.getName());
     }
 
     @Test
     void getByOwnerIdSuccessTest() {
         List<ItemDto> items = itemService.getByOwnerId(user1.getId());
 
-        assertEquals(1, items.size());
-        ItemDto itemDto1 = items.get(0);
+        assertThat(1).isEqualTo(items.size());
+        ItemDto itemDto1 = items.getFirst();
 
-        assertEquals("Item name1", itemDto1.getName());
-        assertEquals("Item Desc1", itemDto1.getDescription());
-        assertEquals(true, itemDto1.getAvailable());
-        assertEquals(1, itemDto1.getComments().size());
-        assertEquals("Great item!", itemDto1.getComments().get(0).getText());
-        assertNotNull(itemDto1.getLastBooking());
-        assertNotNull(itemDto1.getNextBooking());
+        assertThat("Item name1").isEqualTo(itemDto1.getName());
+        assertThat("Item Desc1").isEqualTo(itemDto1.getDescription());
+        assertThat(true).isEqualTo(itemDto1.getAvailable());
+        assertThat(1).isEqualTo(itemDto1.getComments().size());
+        assertThat("Great item!").isEqualTo(itemDto1.getComments().getFirst().getText());
+        assertThat(itemDto1.getLastBooking()).isNotNull();
+        assertThat(itemDto1.getNextBooking()).isNotNull();
     }
 
     @Test
     void getItemByIdSuccessTest() {
         ItemDto itemDto = itemService.getItemById(item1.getId(), user1.getId());
 
-        assertEquals(item1.getName(), itemDto.getName());
-        assertEquals(item1.getDescription(), itemDto.getDescription());
-        assertTrue(itemDto.getAvailable());
-        assertEquals(item1.getOwner(), itemDto.getOwner());
+        assertThat(itemDto.getName()).isEqualTo(item1.getName());
+        assertThat(itemDto.getDescription()).isEqualTo(item1.getDescription());
+        assertThat(itemDto.getAvailable()).isTrue();
+        assertThat(itemDto.getOwner()).isEqualTo((item1.getOwner()));
     }
 
     @Test
     void findByIdShouldNotFindItemById() {
-        assertThrows(NotFoundException.class, () -> {
+        assertThatThrownBy(() -> {
             itemService.getByOwnerId(999L);
-        });
+        }).isInstanceOf(NotFoundException.class);
     }
 
     @Test
@@ -311,35 +309,36 @@ public class ItemServiceImplTest {
 
         List<ItemDto> items = itemService.getByOwnerId(savedUser.getId());
 
-        Assertions.assertThat(items).hasSize(1);
-        Assertions.assertThat(items.get(0).getId()).isEqualTo(savedItem.getId());
+        assertThat(items).hasSize(1);
+        assertThat(items.getFirst().getId()).isEqualTo(savedItem.getId());
     }
 
     @Test
     void searchItemByNameTest() {
         List<ItemDto> itemDto = itemService.searchItemByName("item");
 
-        assertEquals(1, itemDto.size());
-        assertTrue(itemDto.stream().anyMatch(dto -> dto.getName().equals("Item name1")));
-        assertTrue(itemDto.stream().allMatch(dto -> dto.getAvailable()));
+        assertThat(1).isEqualTo(itemDto.size());
+
+        assertThat(itemDto).anyMatch(dto -> dto.getName().equals("Item name1"));
+        assertThat(itemDto).allMatch(dto -> dto.getAvailable());
     }
 
     @Test
     void searchItemIfNameNullTest() {
         List<ItemDto> items = itemService.searchItemByName(null);
 
-        assertTrue(items.isEmpty());
+        assertThat(items).isEmpty();
     }
 
     @Test
     void deleteSuccessTest() {
         ItemDto itemBeforeDelete = itemService.getItemById(item1.getId(), user1.getId());
-        assertEquals("Item name1", itemBeforeDelete.getName());
+        assertThat(itemBeforeDelete.getName()).isEqualTo("Item name1");
 
         itemService.delete(user1.getId(), item1.getId());
-        NotFoundException exception = assertThrows(NotFoundException.class, () ->
-                itemService.getItemById(item1.getId(), user1.getId()));
-        assertEquals("Ошибка в получении предмета с id " + item1.getId() + ".", exception.getMessage());
+        assertThatThrownBy(() -> itemService.getItemById(item1.getId(), user1.getId()))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("Ошибка в получении предмета с id " + item1.getId() + ".");
     }
 
     @Test
@@ -349,14 +348,14 @@ public class ItemServiceImplTest {
 
         CommentDto savedComment = itemService.saveComment(commentDto, item1.getId(), user2.getId());
 
-        assertEquals("Great item", savedComment.getText());
-        assertEquals(user2.getName(), savedComment.getAuthorName());
-        assertEquals(item1.getId(), savedComment.getItem().getId());
+        assertThat(savedComment.getText()).isEqualTo("Great item");
+        assertThat(savedComment.getAuthorName()).isEqualTo(user2.getName());
+        assertThat(savedComment.getItem().getId()).isEqualTo(item1.getId());
 
         Comment savedEntity = entityManager.find(Comment.class, savedComment.getId());
-        assertEquals("Great item", savedEntity.getText());
-        assertEquals(user2.getId(), savedEntity.getAuthor().getId());
-        assertEquals(item1.getId(), savedEntity.getItem().getId());
+        assertThat(savedEntity.getText()).isEqualTo("Great item");
+        assertThat(savedEntity.getAuthor().getId()).isEqualTo(user2.getId());
+        assertThat(savedEntity.getItem().getId()).isEqualTo(item1.getId());
     }
 
     @Test
@@ -374,8 +373,7 @@ public class ItemServiceImplTest {
         CommentDto commentDtoRequest = new CommentDto();
         commentDtoRequest.setText("Nice item!");
 
-        assertThrows(ValidationException.class, () -> {
-            itemService.saveComment(commentDtoRequest, savedItem.getId(), savedCommenter.getId());
-        });
+        assertThatThrownBy(() -> itemService.saveComment(commentDtoRequest, savedItem.getId(), savedCommenter.getId()))
+                .isInstanceOf(ValidationException.class);
     }
 }

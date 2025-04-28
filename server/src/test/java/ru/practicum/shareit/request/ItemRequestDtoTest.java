@@ -10,11 +10,11 @@ import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -47,12 +47,19 @@ class ItemRequestDtoTest {
         itemDto.setAvailable(true);
         itemDto.setOwner(user1);
 
+        Item item = new Item();
+        item.setId(1L);
+        item.setName("Item");
+        item.setDescription("Description");
+        item.setAvailable(true);
+        item.setOwner(user1);
+
         ItemRequestDto requestDto = new ItemRequestDto();
         requestDto.setId(1L);
         requestDto.setRequestorId(1L);
         requestDto.setDescription("Desc");
         requestDto.setCreated(LocalDateTime.of(2025, 4, 23, 12, 0, 0));
-        requestDto.setItems(Collections.singletonList(itemDto));
+        requestDto.setItems(Collections.singletonList(item));
         requestDto.setRequestorId(user1.getId());
 
         JsonContent<ItemRequestDto> result = json.write(requestDto);
@@ -68,6 +75,5 @@ class ItemRequestDtoTest {
         assertThat(result).extractingJsonPathBooleanValue("$.items[0].available").isEqualTo(true);
         assertThat(result).extractingJsonPathValue("$.items[0].lastBooking").isNull();
         assertThat(result).extractingJsonPathValue("$.items[0].nextBooking").isNull();
-        assertThat(result).extractingJsonPathValue("$.items[0].comments").isEqualTo(new ArrayList<>());
     }
 }

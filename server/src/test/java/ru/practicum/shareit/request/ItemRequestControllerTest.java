@@ -11,12 +11,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -29,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-public class ItemRequestControllerTest {
+class ItemRequestControllerTest {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Mock
@@ -40,7 +39,7 @@ public class ItemRequestControllerTest {
 
     private MockMvc mvc;
     private ItemRequestDto itemRequestDto;
-    private ItemDto itemDto1;
+    private Item item;
 
     @BeforeEach
     void setUp() {
@@ -51,18 +50,17 @@ public class ItemRequestControllerTest {
                 .standaloneSetup(itemRequestController)
                 .build();
 
-        itemDto1 = new ItemDto();
-        itemDto1.setId(1L);
-        itemDto1.setName("name");
-        itemDto1.setDescription("description");
-        itemDto1.setAvailable(true);
-        itemDto1.setComments(Collections.emptyList());
+        item = new Item();
+        item.setId(1L);
+        item.setName("name");
+        item.setDescription("description");
+        item.setAvailable(true);
 
         itemRequestDto = new ItemRequestDto();
         itemRequestDto.setId(1L);
         itemRequestDto.setDescription("RequestDescription1");
         itemRequestDto.setCreated(now);
-        itemRequestDto.setItems(List.of(itemDto1));
+        itemRequestDto.setItems(List.of(this.item));
     }
 
     @Test

@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exeptions.NotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -30,19 +30,17 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         userService.getById(userId);
         ItemRequest itemRequest = itemRequestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Запрос с id " + requestId + " не найден"));
-
-        ItemRequestDto itemRequestDto = ItemRequestMapper.toDto(itemRequest);
         List<Item> items = itemRepository.findAllByRequestId(requestId);
-        itemRequestDto.setItems(items.stream().map(ItemMapper::toDto).toList());
-        return itemRequestDto;
+
+        return ItemRequestMapper.toDto(itemRequest, items);
     }
 
     @Override
     public List<ItemRequestDto> getAll() {
-        List<ItemRequest> requestDtos = itemRequestRepository.findAll();
+        List<ItemRequest> request = itemRequestRepository.findAll();
 
-        return requestDtos.stream()
-                .map(ItemRequestMapper::toDto)
+        return request.stream()
+                .map(itemRequest -> ItemRequestMapper.toDto(itemRequest, new ArrayList<>()))
                 .toList();
     }
 
@@ -50,10 +48,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<ItemRequestDto> getUserRequest(Long userId) {
         userService.getById(userId);
         List<ItemRequest> itemRequests = itemRequestRepository.findAllByRequestorIdOrderByCreatedDesc(userId);
+        List<Long> ids = itemRequests.stream().map(ItemRequest::getId).toList();
+        List<Item> items = itemRepository.findAllByRequestId(ids);
 
-        return itemRequests.stream()
-                .map(ItemRequestMapper::toDto)
-                .toList();
+        return ItemRequestMapper.toDto(itemRequests, items);
     }
 
     @Override
@@ -62,6 +60,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         userService.getById(userId);
         ItemRequest itemRequest = ItemRequestMapper.toEntity(new ItemRequest(), itemRequestDto, userId);
 
-        return ItemRequestMapper.toDto(itemRequestRepository.save(itemRequest));
+        return ItemRequestMapper.toDto(itemRequestRepository.save(itemRequest), new ArrayList<>());
     }
 }

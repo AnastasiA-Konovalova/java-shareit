@@ -16,13 +16,11 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Import({ItemRequestServiceImpl.class, UserServiceImpl.class})
-public class ItemRequestServiceImplTest {
+class ItemRequestServiceImplTest {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -78,44 +76,44 @@ public class ItemRequestServiceImplTest {
     void getByIdTest() {
         ItemRequestDto requestDto = itemRequestService.getById(request1.getId(), user1.getId());
 
-        assertNotNull(requestDto.getId());
-        assertEquals(request1.getId(), requestDto.getId());
-        assertEquals("Request 1", requestDto.getDescription());
-        assertEquals(user1.getId(), requestDto.getRequestorId());
-        assertEquals(1, requestDto.getItems().size());
-        assertEquals(item1.getId(), requestDto.getItems().get(0).getId());
-        assertEquals(item1.getName(), requestDto.getItems().get(0).getName());
+        assertThat(requestDto.getId()).isNotNull();
+        assertThat(requestDto.getId()).isEqualTo(request1.getId());
+        assertThat(requestDto.getDescription()).isEqualTo("Request 1");
+        assertThat(requestDto.getRequestorId()).isEqualTo(user1.getId());
+        assertThat(requestDto.getItems()).hasSize(1);
+        assertThat(requestDto.getItems().getFirst().getId()).isEqualTo(item1.getId());
+        assertThat(requestDto.getItems().getFirst().getName()).isEqualTo(item1.getName());
     }
 
     @Test
     void getByIdTestWithoutItems() {
         ItemRequestDto requestDto = itemRequestService.getById(request2.getId(), user1.getId());
 
-        assertNotNull(requestDto.getId());
-        assertEquals(request2.getId(), requestDto.getId());
-        assertEquals("Request 2", requestDto.getDescription());
-        assertEquals(user1.getId(), requestDto.getRequestorId());
-        assertTrue(requestDto.getItems().isEmpty());
+        assertThat(requestDto.getId()).isNotNull();
+        assertThat(requestDto.getId()).isEqualTo(request2.getId());
+        assertThat(requestDto.getDescription()).isEqualTo("Request 2");
+        assertThat(requestDto.getRequestorId()).isEqualTo(user1.getId());
+        assertThat(requestDto.getItems()).isEmpty();
     }
 
     @Test
     void getAllTest() {
         List<ItemRequestDto> requests = itemRequestService.getAll();
 
-        assertEquals(2, requests.size());
-        assertEquals(request2.getId(), requests.get(1).getId());
-        assertEquals(request1.getId(), requests.get(0).getId());
-        assertTrue(requests.get(0).getItems() == null || requests.get(0).getItems().isEmpty());
+        assertThat(requests).hasSize(2);
+        assertThat(requests.get(1).getId()).isEqualTo(request2.getId());
+        assertThat(requests.get(0).getId()).isEqualTo(request1.getId());
+        assertThat(requests.get(0).getItems()).satisfies(items -> assertThat(items == null || items.isEmpty()).isTrue());
     }
 
     @Test
     void getUserRequestTest() {
         List<ItemRequestDto> requests = itemRequestService.getUserRequest(user1.getId());
 
-        assertEquals(2, requests.size());
-        assertEquals(request2.getId(), requests.get(0).getId());
-        assertEquals(request1.getId(), requests.get(1).getId());
-        assertTrue(requests.get(0).getItems() == null || requests.get(0).getItems().isEmpty());
+        assertThat(requests).hasSize(2);
+        assertThat(requests.get(0).getId()).isEqualTo(request2.getId());
+        assertThat(requests.get(1).getId()).isEqualTo(request1.getId());
+        assertThat(requests.get(0).getItems()).satisfies(items -> assertThat(items == null || items.isEmpty()).isTrue());
     }
 
     @Test
@@ -128,7 +126,7 @@ public class ItemRequestServiceImplTest {
 
         List<ItemRequestDto> requests = itemRequestService.getUserRequest(noRequestsUser.getId());
 
-        assertTrue(requests.isEmpty());
+        assertThat(requests).isEmpty();
     }
 
     @Test
@@ -138,14 +136,14 @@ public class ItemRequestServiceImplTest {
 
         ItemRequestDto createdRequest = itemRequestService.create(requestDto, user1.getId());
 
-        assertNotNull(createdRequest.getId());
-        assertEquals("New Request", createdRequest.getDescription());
-        assertEquals(user1.getId(), createdRequest.getRequestorId());
-        assertNotNull(createdRequest.getCreated());
-        assertTrue(createdRequest.getItems() == null || createdRequest.getItems().isEmpty());
+        assertThat(createdRequest.getId()).isNotNull();
+        assertThat(createdRequest.getDescription()).isEqualTo("New Request");
+        assertThat(createdRequest.getRequestorId()).isEqualTo(user1.getId());
+        assertThat(createdRequest.getCreated()).isNotNull();
+        assertThat(createdRequest.getItems()).satisfies(items -> assertThat(items == null || items.isEmpty()).isTrue());
 
         ItemRequest savedRequest = entityManager.find(ItemRequest.class, createdRequest.getId());
-        assertEquals("New Request", savedRequest.getDescription());
-        assertEquals(user1.getId(), savedRequest.getRequestorId());
+        assertThat(savedRequest.getDescription()).isEqualTo("New Request");
+        assertThat(savedRequest.getRequestorId()).isEqualTo(user1.getId());
     }
 }

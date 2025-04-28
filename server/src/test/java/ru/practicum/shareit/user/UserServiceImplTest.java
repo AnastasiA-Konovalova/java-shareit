@@ -13,11 +13,12 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 @Import({UserServiceImpl.class})
-public class UserServiceImplTest {
+class UserServiceImplTest {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -59,9 +60,9 @@ public class UserServiceImplTest {
     void getAllTest() {
         List<UserDto> users = userService.getAll();
 
-        assertEquals(2, users.size());
-        assertTrue(users.stream().anyMatch(u -> u.getEmail().equals("user1@email.com")));
-        assertTrue(users.stream().anyMatch(u -> u.getEmail().equals("user2@email.com")));
+        assertThat(users).hasSize(2);
+        assertThat(users).anyMatch(u -> u.getEmail().equals("user1@email.com"));
+        assertThat(users).anyMatch(u -> u.getEmail().equals("user2@email.com"));
     }
 
     @Test
@@ -71,24 +72,24 @@ public class UserServiceImplTest {
 
         List<UserDto> users = userService.getAll();
 
-        assertTrue(users.isEmpty());
+        assertThat(users).isEmpty();
     }
 
     @Test
     void getByIdTest() {
         UserDto userDto = userService.getById(user1.getId());
 
-        assertNotNull(userDto.getId());
-        assertEquals(user1.getId(), userDto.getId());
-        assertEquals("User1", userDto.getName());
-        assertEquals("user1@email.com", userDto.getEmail());
+        assertThat(userDto.getId()).isNotNull();
+        assertThat(userDto.getId()).isEqualTo(user1.getId());
+        assertThat(userDto.getName()).isEqualTo("User1");
+        assertThat(userDto.getEmail()).isEqualTo("user1@email.com");
     }
 
     @Test
     void getByIdTestWithInvalidId() {
-        NotFoundException exception = assertThrows(NotFoundException.class, () ->
-                userService.getById(999L));
-        assertEquals("Ошибка в получении пользователя с id 999.", exception.getMessage());
+        assertThatThrownBy(() -> userService.getById(999L))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("Ошибка в получении пользователя с id 999.");
     }
 
     @Test
@@ -98,13 +99,13 @@ public class UserServiceImplTest {
 
         UserDto savedUserDto = userService.save(newUserDto);
 
-        assertNotNull(savedUserDto.getId());
-        assertEquals("New User", savedUserDto.getName());
-        assertEquals("newuser@email.com", savedUserDto.getEmail());
+        assertThat(savedUserDto.getId()).isNotNull();
+        assertThat(savedUserDto.getName()).isEqualTo("New User");
+        assertThat(savedUserDto.getEmail()).isEqualTo("newuser@email.com");
 
         User savedUser = entityManager.find(User.class, savedUserDto.getId());
-        assertEquals("New User", savedUser.getName());
-        assertEquals("newuser@email.com", savedUser.getEmail());
+        assertThat(savedUser.getName()).isEqualTo("New User");
+        assertThat(savedUser.getEmail()).isEqualTo("newuser@email.com");
     }
 
     @Test
@@ -112,9 +113,9 @@ public class UserServiceImplTest {
         newUserDto.setName("Duplicate User");
         newUserDto.setEmail("user1@email.com");
 
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () ->
-                userService.save(newUserDto));
-        assertEquals("Пользователь email" + newUserDto.getEmail() + "уже существует", exception.getMessage());
+        assertThatThrownBy(() -> userService.save(newUserDto))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Пользователь email" + newUserDto.getEmail() + "уже существует");
     }
 
     @Test
@@ -124,13 +125,13 @@ public class UserServiceImplTest {
 
         UserDto updatedUserDto = userService.update(newUserDto, user1.getId());
 
-        assertEquals(user1.getId(), updatedUserDto.getId());
-        assertEquals("Updated User", updatedUserDto.getName());
-        assertEquals("updated@email.com", updatedUserDto.getEmail());
+        assertThat(updatedUserDto.getId()).isEqualTo(user1.getId());
+        assertThat(updatedUserDto.getName()).isEqualTo("Updated User");
+        assertThat(updatedUserDto.getEmail()).isEqualTo("updated@email.com");
 
         User updatedUser = entityManager.find(User.class, user1.getId());
-        assertEquals("Updated User", updatedUser.getName());
-        assertEquals("updated@email.com", updatedUser.getEmail());
+        assertThat(updatedUser.getName()).isEqualTo("Updated User");
+        assertThat(updatedUser.getEmail()).isEqualTo("updated@email.com");
     }
 
     @Test
@@ -140,13 +141,13 @@ public class UserServiceImplTest {
 
         UserDto updatedUserDto = userService.update(newUserDto, user1.getId());
 
-        assertEquals(user1.getId(), updatedUserDto.getId());
-        assertEquals("Updated Name", updatedUserDto.getName());
-        assertEquals("user1@email.com", updatedUserDto.getEmail());
+        assertThat(updatedUserDto.getId()).isEqualTo(user1.getId());
+        assertThat(updatedUserDto.getName()).isEqualTo("Updated Name");
+        assertThat(updatedUserDto.getEmail()).isEqualTo("user1@email.com");
 
         User updatedUser = entityManager.find(User.class, user1.getId());
-        assertEquals("Updated Name", updatedUser.getName());
-        assertEquals("user1@email.com", updatedUser.getEmail());
+        assertThat(updatedUser.getName()).isEqualTo("Updated Name");
+        assertThat(updatedUser.getEmail()).isEqualTo("user1@email.com");
     }
 
     @Test
@@ -154,9 +155,9 @@ public class UserServiceImplTest {
         newUserDto.setName("Updated User");
         newUserDto.setEmail("user2@email.com");
 
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () ->
-                userService.update(newUserDto, user1.getId()));
-        assertEquals("Пользователь email" + newUserDto.getEmail() + "уже существует", exception.getMessage());
+        assertThatThrownBy(() -> userService.update(newUserDto, user1.getId()))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Пользователь email" + newUserDto.getEmail() + "уже существует");
     }
 
     @Test
@@ -164,8 +165,8 @@ public class UserServiceImplTest {
         newUserDto.setName("Updated User");
         newUserDto.setEmail("updated@email.com");
 
-        assertThrows(EntityNotFoundException.class, () ->
-                userService.update(newUserDto, 999L));
+        assertThatThrownBy(() -> userService.update(newUserDto, 999L))
+                .isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
@@ -173,7 +174,7 @@ public class UserServiceImplTest {
         userService.delete(user1.getId());
 
         User deletedUser = entityManager.find(User.class, user1.getId());
-        assertTrue(deletedUser == null || !userRepository.existsById(user1.getId()));
+        assertThat(deletedUser == null || !userRepository.existsById(user1.getId())).isTrue();
     }
 
     @Test
@@ -181,9 +182,8 @@ public class UserServiceImplTest {
         userService.delete(999L);
 
         List<User> users = userRepository.findAll();
-        assertEquals(2, users.size());
+        assertThat(users).hasSize(2);
     }
-
 
     @Test
     void updateTestWithNullName() {
@@ -192,12 +192,12 @@ public class UserServiceImplTest {
 
         UserDto updatedUserDto = userService.update(newUserDto, user1.getId());
 
-        assertEquals(user1.getId(), updatedUserDto.getId());
-        assertEquals("User1", updatedUserDto.getName());
-        assertEquals("updated@email.com", updatedUserDto.getEmail());
+        assertThat(updatedUserDto.getId()).isEqualTo(user1.getId());
+        assertThat(updatedUserDto.getName()).isEqualTo("User1");
+        assertThat(updatedUserDto.getEmail()).isEqualTo("updated@email.com");
 
         User updatedUser = entityManager.find(User.class, user1.getId());
-        assertEquals("User1", updatedUser.getName());
-        assertEquals("updated@email.com", updatedUser.getEmail());
+        assertThat(updatedUser.getName()).isEqualTo("User1");
+        assertThat(updatedUser.getEmail()).isEqualTo("updated@email.com");
     }
 }

@@ -47,7 +47,6 @@ class ItemMapperTest {
         itemCreateDto.setAvailable(true);
         itemCreateDto.setOwner(ItemMapperTest.owner);
         itemCreateDto.setRequestId(2L);
-
     }
 
     @Test
@@ -58,7 +57,7 @@ class ItemMapperTest {
         assertThat(itemDto.getId()).isEqualTo(2L);
         assertThat(itemDto.getName()).isEqualTo("Item");
         assertThat(itemDto.getDescription()).isEqualTo("Description");
-        assertThat(itemDto.getAvailable()).isEqualTo(true);
+        assertThat(itemDto.getAvailable()).isTrue();
         assertThat(itemDto.getOwner()).isEqualTo(owner);
     }
 
@@ -86,7 +85,7 @@ class ItemMapperTest {
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getName()).isEqualTo("Item");
         assertThat(result.getDescription()).isEqualTo("Description");
-        assertThat(result.getAvailable()).isEqualTo(true);
+        assertThat(result.getAvailable()).isTrue();
         assertThat(result.getOwner()).isEqualTo(owner);
         assertThat(result.getRequest()).isNull();
     }
@@ -106,7 +105,7 @@ class ItemMapperTest {
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getName()).isEqualTo("Item");
         assertThat(result.getDescription()).isEqualTo("Description");
-        assertThat(result.getAvailable()).isEqualTo(true);
+        assertThat(result.getAvailable()).isTrue();
         assertThat(result.getOwner()).isEqualTo(owner);
         assertThat(result.getRequest()).isNull();
     }
