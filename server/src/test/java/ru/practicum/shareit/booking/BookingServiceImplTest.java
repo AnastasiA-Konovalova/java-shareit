@@ -18,13 +18,12 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 @Import({BookingServiceImpl.class})
-public class BookingServiceImplTest {
+class BookingServiceImplTest {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -118,49 +117,49 @@ public class BookingServiceImplTest {
     void getByIdSuccessTest() {
         BookingDto bookingDto = bookingService.getById(pastBooking.getId(), booker1.getId());
 
-        assertNotNull(bookingDto.getId());
-        assertEquals(pastBooking.getId(), bookingDto.getId());
-        assertEquals(item1.getId(), bookingDto.getItem().getId());
-        assertEquals(booker1.getId(), bookingDto.getBooker().getId());
-        assertEquals(BookingStatus.APPROVED, bookingDto.getStatus());
+        assertThat(bookingDto.getId()).isNotNull();
+        assertThat(pastBooking.getId()).isEqualTo(bookingDto.getId());
+        assertThat(item1.getId()).isEqualTo(bookingDto.getItem().getId());
+        assertThat(booker1.getId()).isEqualTo(bookingDto.getBooker().getId());
+        assertThat(BookingStatus.APPROVED).isEqualTo(bookingDto.getStatus());
     }
 
     @Test
     void getByIdTestWithInvalidBookingId() {
-        NotFoundException exception = assertThrows(NotFoundException.class, () ->
-                bookingService.getById(999L, booker1.getId()));
-        assertEquals("Бронирование не найдено", exception.getMessage());
+        assertThatThrownBy(() -> bookingService.getById(999L, booker1.getId()))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("Бронирование не найдено");
     }
 
     @Test
     void getAllByUserSuccessTest() {
         List<BookingDto> bookings = bookingService.getAllByUser(booker1.getId(), State.ALL);
 
-        assertEquals(5, bookings.size());
-        assertEquals(rejectedBooking.getId(), bookings.get(0).getId());
-        assertEquals(waitingBooking.getId(), bookings.get(1).getId());
-        assertEquals(futureBooking.getId(), bookings.get(2).getId());
-        assertEquals(currentBooking.getId(), bookings.get(3).getId());
-        assertEquals(pastBooking.getId(), bookings.get(4).getId());
+        assertThat(bookings).hasSize(5);
+        assertThat(bookings.get(0).getId()).isEqualTo(rejectedBooking.getId());
+        assertThat(bookings.get(1).getId()).isEqualTo(waitingBooking.getId());
+        assertThat(bookings.get(2).getId()).isEqualTo(futureBooking.getId());
+        assertThat(bookings.get(3).getId()).isEqualTo(currentBooking.getId());
+        assertThat(bookings.get(4).getId()).isEqualTo(pastBooking.getId());
     }
 
     @Test
     void getAllByUserIfNotExistTest() {
-        NotFoundException exception = assertThrows(NotFoundException.class, () ->
-                bookingService.getAllByUser(999L, State.ALL));
-        assertEquals("Пользователь не найден", exception.getMessage());
+        assertThatThrownBy(() -> bookingService.getAllByUser(999L, State.ALL))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("Пользователь не найден");
     }
 
     @Test
     void getAllByOwnerSuccessTest() {
         List<BookingDto> bookings = bookingService.getAllByOwner(owner1.getId(), State.ALL);
 
-        assertEquals(5, bookings.size());
-        assertEquals(rejectedBooking.getId(), bookings.get(0).getId());
-        assertEquals(waitingBooking.getId(), bookings.get(1).getId());
-        assertEquals(futureBooking.getId(), bookings.get(2).getId());
-        assertEquals(currentBooking.getId(), bookings.get(3).getId());
-        assertEquals(pastBooking.getId(), bookings.get(4).getId());
+        assertThat(bookings).hasSize(5);
+        assertThat(bookings.get(0).getId()).isEqualTo(rejectedBooking.getId());
+        assertThat(bookings.get(1).getId()).isEqualTo(waitingBooking.getId());
+        assertThat(bookings.get(2).getId()).isEqualTo(futureBooking.getId());
+        assertThat(bookings.get(3).getId()).isEqualTo(currentBooking.getId());
+        assertThat(bookings.get(4).getId()).isEqualTo(pastBooking.getId());
     }
 
     @Test
@@ -172,16 +171,17 @@ public class BookingServiceImplTest {
 
         BookingDto createdBooking = bookingService.create(bookingDto, booker1.getId());
 
-        assertNotNull(createdBooking.getId());
-        assertEquals(item1.getId(), createdBooking.getItem().getId());
-        assertEquals(booker1.getId(), createdBooking.getBooker().getId());
-        assertEquals(now.plusDays(1), createdBooking.getStart());
-        assertEquals(now.plusDays(2), createdBooking.getEnd());
-        assertEquals(BookingStatus.WAITING, createdBooking.getStatus());
+        assertThat(createdBooking.getId()).isNotNull();
+        assertThat(createdBooking.getItem().getId()).isEqualTo(item1.getId());
+        assertThat(createdBooking.getBooker().getId()).isEqualTo(booker1.getId());
+        assertThat(createdBooking.getStart()).isEqualTo(now.plusDays(1));
+        assertThat(createdBooking.getEnd()).isEqualTo(now.plusDays(2));
+        assertThat(createdBooking.getStatus()).isEqualTo(BookingStatus.WAITING);
 
         Booking savedBooking = entityManager.find(Booking.class, createdBooking.getId());
-        assertEquals(item1.getId(), savedBooking.getItem().getId());
-        assertEquals(booker1.getId(), savedBooking.getBooker().getId());
+
+        assertThat(savedBooking.getItem().getId()).isEqualTo(item1.getId());
+        assertThat(savedBooking.getBooker().getId()).isEqualTo(booker1.getId());
     }
 
     @Test
@@ -191,61 +191,61 @@ public class BookingServiceImplTest {
         bookingDto.setStart(now.plusDays(1));
         bookingDto.setEnd(now.plusDays(2));
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () ->
-                bookingService.create(bookingDto, 999L));
-        assertEquals("Пользователь не найден", exception.getMessage());
+        assertThatThrownBy(() -> bookingService.create(bookingDto, 999L))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("Пользователь не найден");
     }
 
     @Test
     void changeBookingStatusSuccessTest() {
         BookingDto updatedBooking = bookingService.changeBookingStatus(waitingBooking.getId(), owner1.getId(), true);
 
-        assertEquals(BookingStatus.APPROVED, updatedBooking.getStatus());
-        assertEquals(waitingBooking.getId(), updatedBooking.getId());
-        assertEquals(item1.getId(), updatedBooking.getItem().getId());
-        assertEquals(booker1.getId(), updatedBooking.getBooker().getId());
+        assertThat(updatedBooking.getStatus()).isEqualTo(BookingStatus.APPROVED);
+        assertThat(updatedBooking.getId()).isEqualTo(waitingBooking.getId());
+        assertThat(updatedBooking.getItem().getId()).isEqualTo(item1.getId());
+        assertThat(updatedBooking.getBooker().getId()).isEqualTo(booker1.getId());
 
         Booking savedBooking = entityManager.find(Booking.class, waitingBooking.getId());
-        assertEquals(BookingStatus.APPROVED, savedBooking.getBookingStatus());
+        assertThat(savedBooking.getBookingStatus()).isEqualTo(BookingStatus.APPROVED);
     }
 
     @Test
     void getAllByUserTestWithWaitingState() {
         List<BookingDto> bookings = bookingService.getAllByUser(booker1.getId(), State.WAITING);
 
-        assertEquals(1, bookings.size());
-        assertEquals(waitingBooking.getId(), bookings.get(0).getId());
+        assertThat(bookings).hasSize(1);
+        assertThat(bookings.getFirst().getId()).isEqualTo(waitingBooking.getId());
     }
 
     @Test
     void getAllByUserTestWithRejectedState() {
         List<BookingDto> bookings = bookingService.getAllByUser(booker1.getId(), State.REJECTED);
 
-        assertEquals(1, bookings.size());
-        assertEquals(rejectedBooking.getId(), bookings.get(0).getId());
+        assertThat(bookings).hasSize(1);
+        assertThat(bookings.getFirst().getId()).isEqualTo(rejectedBooking.getId());
     }
 
     @Test
     void getAllByOwnerTestWithWaitingState() {
         List<BookingDto> bookings = bookingService.getAllByOwner(owner1.getId(), State.WAITING);
 
-        assertEquals(1, bookings.size());
-        assertEquals(waitingBooking.getId(), bookings.get(0).getId());
+        assertThat(bookings).hasSize(1);
+        assertThat(bookings.getFirst().getId()).isEqualTo(waitingBooking.getId());
     }
 
     @Test
     void getAllByOwnerTestWithRejectedState() {
         List<BookingDto> bookings = bookingService.getAllByOwner(owner1.getId(), State.REJECTED);
 
-        assertEquals(1, bookings.size());
-        assertEquals(rejectedBooking.getId(), bookings.get(0).getId());
+        assertThat(bookings).hasSize(1);
+        assertThat(bookings.getFirst().getId()).isEqualTo(rejectedBooking.getId());
     }
 
     @Test
     void getAllByOwnerTestIfOwnerIsNotExist() {
-        NotFoundException exception = assertThrows(NotFoundException.class, () ->
-                bookingService.getAllByOwner(999L, State.ALL));
-        assertEquals("Пользователь не найден", exception.getMessage());
+        assertThatThrownBy(() -> bookingService.getAllByOwner(999L, State.ALL))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("Пользователь не найден");
     }
 
     @Test
@@ -255,9 +255,9 @@ public class BookingServiceImplTest {
         bookingDto.setStart(now.plusDays(1));
         bookingDto.setEnd(now.plusDays(2));
 
-        ValidationException exception = assertThrows(ValidationException.class, () ->
-                bookingService.create(bookingDto, booker1.getId()));
-        assertEquals("Бронирование этой вещи запрещено", exception.getMessage());
+        assertThatThrownBy(() -> bookingService.create(bookingDto, booker1.getId()))
+                .isInstanceOf(ValidationException.class)
+                .hasMessage("Бронирование этой вещи запрещено");
     }
 
     @Test
@@ -267,50 +267,49 @@ public class BookingServiceImplTest {
         bookingDto.setStart(now.plusDays(1));
         bookingDto.setEnd(now.plusDays(2));
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () ->
-                bookingService.create(bookingDto, booker1.getId()));
-        assertEquals("Ошибка в получении предмета с id 999.", exception.getMessage());
+        assertThatThrownBy(() -> bookingService.create(bookingDto, booker1.getId()))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("Ошибка в получении предмета с id 999.");
     }
 
     @Test
     void changeBookingStatusTestWithNotWaitingStatus() {
-        ValidationException exception = assertThrows(ValidationException.class, () ->
-                bookingService.changeBookingStatus(pastBooking.getId(), owner1.getId(), true));
-        assertEquals("Статус уже определен", exception.getMessage());
+        assertThatThrownBy(() -> bookingService.changeBookingStatus(pastBooking.getId(), owner1.getId(), true))
+                .isInstanceOf(ValidationException.class)
+                .hasMessage("Статус уже определен");
     }
 
     @Test
     void changeBookingStatusTestWithRejectStatus() {
         BookingDto updatedBooking = bookingService.changeBookingStatus(waitingBooking.getId(), owner1.getId(), false);
 
-        assertEquals(BookingStatus.REJECTED, updatedBooking.getStatus());
-        assertEquals(waitingBooking.getId(), updatedBooking.getId());
-        assertEquals(item1.getId(), updatedBooking.getItem().getId());
-        assertEquals(booker1.getId(), updatedBooking.getBooker().getId());
+        assertThat(updatedBooking.getStatus()).isEqualTo(BookingStatus.REJECTED);
+        assertThat(updatedBooking.getId()).isEqualTo(waitingBooking.getId());
+        assertThat(updatedBooking.getItem().getId()).isEqualTo(item1.getId());
+        assertThat(updatedBooking.getBooker().getId()).isEqualTo(booker1.getId());
 
         Booking savedBooking = entityManager.find(Booking.class, waitingBooking.getId());
-        assertEquals(BookingStatus.REJECTED, savedBooking.getBookingStatus());
+        assertThat(savedBooking.getBookingStatus()).isEqualTo(BookingStatus.REJECTED);
     }
 
     @Test
     void changeBookingStatusTestWithNotRightOwner() {
-        NotFoundException exception = assertThrows(NotFoundException.class, () ->
-                bookingService.changeBookingStatus(waitingBooking.getId(), booker1.getId(), true));
-        assertEquals("Запрошенные данные о бронировании не могут быть предоставлены в силунесоответствия пользователя",
-                exception.getMessage());
+        assertThatThrownBy(() -> bookingService.changeBookingStatus(waitingBooking.getId(), booker1.getId(), true))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("Запрошенные данные о бронировании не могут быть предоставлены в силу несоответствия пользователя");
     }
 
     @Test
     void changeBookingStatusTestWithNonExistBooking() {
-        NotFoundException exception = assertThrows(NotFoundException.class, () ->
-                bookingService.changeBookingStatus(999L, owner1.getId(), true));
-        assertEquals("Бронирование с id = 999 не найдено", exception.getMessage());
+        assertThatThrownBy(() -> bookingService.changeBookingStatus(999L, owner1.getId(), true))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("Бронирование с id = 999 не найдено");
     }
 
     @Test
-    void changeBookingStatusTesWithNonExistUser() {
-        ValidationException exception = assertThrows(ValidationException.class, () ->
-                bookingService.changeBookingStatus(waitingBooking.getId(), 999L, true));
-        assertEquals("Указанный пользователь не может изменять статус бронирования", exception.getMessage());
+    void changeBookingStatusTestWithNonExistUser() {
+        assertThatThrownBy(() -> bookingService.changeBookingStatus(waitingBooking.getId(), 999L, true))
+                .isInstanceOf(ValidationException.class)
+                .hasMessage("Указанный пользователь не может изменять статус бронирования");
     }
 }
